@@ -11,6 +11,7 @@ final movieRequestProvider = Provider<MovieRequest>((ref)=>MovieRequest());
 class MovieRequest{
 
   Future<List<ClassModel>> getMovies() async {
+    ///THE DOT ENV HAS GOT TO BE IN THE ORIGINAL APP DIRECTORY
     await dotenv.load();
     String token = dotenv.get("Token");
     print(token);

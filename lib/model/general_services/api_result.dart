@@ -31,8 +31,10 @@ class ApiResult<T> {
   bool get isSuccess => status == Status.success;
   bool get isError => status == Status.error;
 
+  ///No more if else st
   Widget when({
-    required Widget Function(T data) done,
+    required Widget Function() idle,
+    required Widget Function(T data) success,
     required Widget Function(String message) error,
     required Widget Function() loading,
   }) {
@@ -47,7 +49,7 @@ class ApiResult<T> {
         }
       case Status.success:
         {
-          return done(data as T);
+          return success(data as T);
         }
       case Status.error:
         {

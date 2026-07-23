@@ -1,20 +1,26 @@
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:either_dart/either.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:springboot_flutter_bloggingapp/model/general_services/api_result.dart';
 import 'package:springboot_flutter_bloggingapp/model/provider/navigation_bar_provider.dart';
+import 'package:springboot_flutter_bloggingapp/model/provider/signup_notifier.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/login_request.dart';
-import 'package:springboot_flutter_bloggingapp/model/requests/signup_request.dart';
+import 'package:springboot_flutter_bloggingapp/model/requests/sign_up_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/theme/change_theme_button_widget.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/utilities/app_button.dart';
 import 'package:springboot_flutter_bloggingapp/view/utilities/app_color.dart';
 
 import '../../model/gen/assets.gen.dart';
 import '../../model/general_services/auth_services.dart';
 import '../../model/internet/internet.dart';
+import '../../model/state/signup_state.dart';
 import '../utilities/constants.dart';
 import '../utilities/custom_text_field.dart';
 import '../utilities/screen_util.dart';
@@ -38,13 +44,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
   TextEditingController passwordController = TextEditingController();
   TextEditingController passwordController2 = TextEditingController();
 
-  bool firstNameError = false;
-  bool emailError = false;
-  bool passwordError = false;
-  bool passwordMismatch = false;
-  bool isLoading = false;
 
-  var errorMessage = "";
 
   FocusNode emailFocusNode = FocusNode();
   FocusNode passwordFocusNode = FocusNode();
@@ -90,6 +90,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
   }
 
 
+
+
+
   @override
   void dispose() {
     // TODO: implement dispose
@@ -105,12 +108,38 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
     super.dispose();
   }
 
+
+  void submit(){
+    final hasInternet = ref.read(internetProvider).status == ConnectivityStatus.connected;
+    ref.read(signUpProvider.notifier).signUp(
+        firstName: firstNameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        confirmPassword: passwordController2.text,
+        hasInternet: hasInternet);
+  }
+
   @override
   Widget build(BuildContext context) {
- //final userProvider = ref.watch(userAuthProvider);
     height: MediaQuery.of(context).size.height;
-    final internetState = ref.watch(internetProvider);
-    final authServiceState = ref.watch(authServiceProvider);
+    final signupState = ref.watch(signUpProvider);
+
+
+
+    ref.listen<SignupState>(signUpProvider, (previous, next) {
+      if (next.request.isSuccess) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const VerificationScreen(email: '',)));
+
+      }
+
+      if (next.request.isError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.request.message),
+          ),
+        );
+      }
+    });
 
 
     // SystemChrome.setSystemUIOverlayStyle(
@@ -134,10 +163,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
           child: Text("Title"),
         ),
         leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios_new_rounded,
-
-          ),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,),
           onPressed: Navigator.of(context).pop,
         ),
       ),
@@ -166,14 +193,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
                ),
                customTextField(
                    error: 'Enter a valid name',
-                   errorCondition: firstNameError,
+                   errorCondition: signupState.firstNameError,
                    controller: firstNameController,
                    label: "First Name"),
                const SizedBox(
                  height: 20,
                ),
                customTextField(
-                 errorCondition: emailError,
+                 errorCondition: signupState.emailError,
                  focusNode: emailFocusNode,
                  controller: emailController,
                  label: "E-mail",
@@ -186,7 +213,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
 
                customTextField(
                  error: '',
-                 errorCondition: passwordMismatch,
+                 errorCondition: signupState.passwordError,
                  isobsure: true,
                  label: "Password",
                  controller: passwordController,
@@ -198,7 +225,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
                ),
                customTextField(
                  error: 'Passwords do not match',
-                 errorCondition: passwordMismatch,
+                 errorCondition: signupState.confirmPasswordError,
                  isobsure: true,
                  label: "Password",
                  controller: passwordController2,
@@ -210,127 +237,60 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
                  height: 20,
                ),
 
-               // GestureDetector(
-               //   onTap: () {
-               //     // Navigator.push(
-               //     //     context,
-               //     //     MaterialPageRoute(
-               //     //       builder: (context) => ForgetPassword(),
-               //     //     ));
-               //   },
-               //   child: Container(
-               //     alignment: Alignment.bottomLeft,
-               //     child: const Text(
-               //       "By signing up, you accept our T&Cs and Privacy Policy. ",
-               //       style: TextStyle(
-               //         fontSize: 13,
-               //       ),
-               //     ),
-               //   ),
-               // ),
 
-               isLoading ?
-                   Center(
+           signupState.request.when(
+               idle: (){
+                 return AppButton(onPressed: submit,
+                     label: "Sign Up",);
+               },
+               success: (_){
+                 return AppButton(
+                   onPressed: submit,
+                   label: 'Sign up',
+                 );
+               },
+               error: (message){
+                 return Column(
+                   children: [
+                     Text(
+                       message,
+                       style: const TextStyle(color: Colors.red),
+                     ),
+                     AppButton(
+                       onPressed: submit,
+                       label: 'Try agaIN',
+                     ),
+                   ],
+                 );
+               },
+               loading: (){
+                 return Center(
                      child: LoadingAnimationWidget.inkDrop(
-                         color: Theme.of(context).brightness == Brightness.dark
-                         ? kWhite
-                         : kBlack, size: 25),
-                   ) :
-
-               AppButton(onPressed: () async {
-                 if (internetState.status ==
-                     ConnectivityStatus.disconnected) {
-                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                     ScaffoldMessenger.of(context).showSnackBar(
-                       const SnackBar(
-                         content: Text(
-                           CustomStrings.noInternet1,
-                           textAlign: TextAlign.center,
-                         ),),
-                     );
-                   });
-                 } else{
-                   setState(() {
-                     isLoading =  true;
-                   });
-                   if (firstNameController.text.isEmpty) {
-                     setState(() {
-                       firstNameError = true;
-                       isLoading = false;
-                     });
-                   }
-                   if (passwordController.text !=
-                       passwordController2.text ||
-                       passwordController.text.isEmpty ||
-                       passwordController2.text.isEmpty) {
-                     setState(() {
-                       passwordMismatch = true;
-                       isLoading = false;
-                     });
-                   }
-
-                   if (!isValidEmail(emailController.text)) {
-                     setState(() {
-                       emailError = true;
-                       isLoading = false;
-                     });
-                   }
-
-                   if(isLoading = true){
-                      // final response = await userProvider.userSignUp(emailController.text, passwordController.text, firstNameController.text) ;
-                      // print(response);
-
-                      final response = await authServiceState.signup(
-                         SignUpRequest(email: emailController.text.toLowerCase().trim(),
-                             password: passwordController.text.trim(), firstName: firstNameController.text.trim()));
-                 print('udddddddddddddddddddddddddddddd');
-                     print(response.toString());
-
-                   return response.fold((failure){
-                    errorMessage = failure.message;
-                    print('$errorMessage  + 777777777777');
-
-                     if (kDebugMode) {
-                       print('$response + 224444' );
-                     }
-
-                   }, (r){
-                     print('$r + 00000000000');
-                     return true;
-                   });
-
-
-                     // final response = await authServiceState.login(LoginRequest(email: emailController.text.trim(), password: passwordController.text.trim(), otp: ''));
-                     // return response.fold((failure){
-                     //   errorMessage = failure.errorMessage;
-                     //
-                     // }, (r){
-                     //   if (kDebugMode) {
-                     //     print(response);
-                     //   }
-                     //   return true;
-                     // });
-
-
-
-                   }
-                 }
-               }, label: 'Sign Up')
+                     color: Theme.of(context).brightness == Brightness.dark
+                      ? kWhite
+                     : kBlack, size: 25));
+               }),
 
 
              ],
            ),
            ),
-
          ],
         )
-
       ),
     );
   }
-
-
-
-
-
 }
+
+
+// AppButton(onPressed: () async {
+//   if (internetState.status ==
+//       ConnectivityStatus.disconnected) {
+//     WidgetsBinding.instance.addPostFrameCallback((_) {
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(
+//           content: Text(
+//             CustomStrings.noInternet1,
+//             textAlign: TextAlign.center,
+//           ),),
+//       );

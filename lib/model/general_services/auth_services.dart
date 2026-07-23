@@ -8,7 +8,8 @@ import 'package:springboot_flutter_bloggingapp/model/response/sign_up_response.d
 //import 'package:springboot_flutter_bloggingapp/model/services/auth_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../requests/login_request.dart';
-import '../requests/signup_request.dart';
+import '../requests/send_otp_request.dart';
+import '../requests/sign_up_request.dart';
 import 'api_client.dart';
 import 'auth_api.dart';
 import 'exceptions.dart';
@@ -23,14 +24,15 @@ final authServiceProvider = Provider<AuthServiceImpl>((ref) {
 });
 
 
-//this is our blueprint like job description. What to expect in the class and doesnt write the code
+///this is our blueprint like job description. What to expect in the class and doesnt write the code
 abstract class AuthService {
   Future<Either<ApiException, bool>> login(LoginRequest loginRequest);
   Future<Either<ApiException, bool>> signup(SignUpRequest signUpRequest);
+  Future<Either<ApiException, bool>> verifyOtp(OtpRequest otpRequest);
 
 }
 
-//fulfillment of the contract
+///return raw string
 class AuthServiceImpl extends AuthService{
 
   final AuthApi authApi;
@@ -66,20 +68,15 @@ class AuthServiceImpl extends AuthService{
 
   @override
   Future<Either<ApiException, bool>> signup(SignUpRequest signUpRequest) async{
-    print(' signup called');
     final response = await authApi.signUp(signUpRequest);
-    print('$response + 11111111111111111111');
-    return response.fold((failureee){
-      return Left(failureee);
+    return response.fold((failure){
+      return Left(failure);
     }, (signUpResponse) async{
-      log("Sign up successful");
-      log("user: ${signUpResponse.toJson()}");
+    log("user: ${signUpResponse.toJson()}");
       final loginResponse = await authApi.login(
         LoginRequest(email: signUpRequest.email, password: signUpRequest.password,),);
-      print('Log in api has been called');
-      //MAYBE REMOVE THE OTP
-      return loginResponse.fold((failureii){
-        return Left(failureii);
+      return loginResponse.fold((failure){
+        return Left(failure);
       }, (loginResponse) async{
         await tokenRepository.saveUserCredentials(
             loginResponse.accessToken!,
@@ -87,6 +84,49 @@ class AuthServiceImpl extends AuthService{
             loginResponse.refreshToken!);
         return const Right(true);
       });
-
     });
+  }
+
+  @override
+  Future<Either<ApiException, bool>> verifyOtp(OtpRequest otpRequest) async{
+    final response = await authApi.verifyOtp(otpRequest);
+    return response.fold((failure){
+      return Left(failure);
+    }, (verifyOtpResponse) async{
+      log("verifyOtpResponse: $verifyOtpResponse");
+      if(verifyOtpResponse == 'Confirmed') {
+        return const Right(true);
+      } else{
+        return Left(ApiException(verifyOtpResponse));
+      }
+    }
+    );
   }}
+
+
+
+
+// Future addProfilePic(email, profilePic) async {
+//   String message = '';
+//   final url =
+//   Uri.parse('https://myroute-aqn5.onrender.com/api/v1/users/update-account');
+//   final response = await http.patch(
+//     url,
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//     body: jsonEncode({
+//       'email': email,
+//       'profilePic':profilePic
+//
+//     }),
+//   );
+//   if (response.statusCode == 200) {
+//     message = 'updated';
+//     return message;
+//   }
+//   else {
+//     message = response.body;
+//     return message;
+//   }
+// }

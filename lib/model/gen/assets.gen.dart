@@ -9,6 +9,9 @@
 
 import 'package:flutter/widgets.dart';
 
+
+//A PACKAGE WILL GENERATE CODE FOR OUR IMAGE, ICONS AND ASSETS
+
 class $AssetsPngsGen {
   const $AssetsPngsGen();
 

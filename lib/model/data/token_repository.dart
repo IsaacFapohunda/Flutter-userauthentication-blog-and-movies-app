@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:springboot_flutter_bloggingapp/main.dart';
 import '../response/sign_up_response.dart';
-import '../response/user.dart';
+import '../response/user_credentials.dart';
 import 'dart:convert';
 
 

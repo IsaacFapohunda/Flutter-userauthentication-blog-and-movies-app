@@ -1,5 +1,7 @@
 import 'dart:convert';
-
+// success": true,
+// "responseCode": "200",
+// "responseMessage: "Successful Login",
 class LoginResponse{
   LoginResponse({this.refreshToken, this.accessToken});
 
@@ -12,8 +14,8 @@ class LoginResponse{
   String toRawJson() => json.encode(toJson());
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) => LoginResponse(
-    refreshToken: json["refresh"],
-    accessToken: json["access"],
+    refreshToken: json['responseData']['refresh_token'],
+    accessToken: json['responseData']["access_token"],
   );
 
   Map<String, dynamic> toJson() => {

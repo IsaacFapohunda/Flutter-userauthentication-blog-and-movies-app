@@ -6,6 +6,7 @@ import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/Signup_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/splash_screen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/utilities/app_image.dart';
 import 'package:springboot_flutter_bloggingapp/view/utilities/constants.dart';
 import 'package:provider/provider.dart';
@@ -18,9 +19,9 @@ final navigatorKey = GlobalKey<NavigatorState>();
 //late Mixpanel mixpanel;
 late SharedPreferences prefs;
 
-String baseUrl = 'https://ca48-197-210-55-100.ngrok-free.app/api/v1/role_base';
+String baseUrl = 'https://springbootrolebaseauth.onrender.com/api/v1/role_base';
 
-//https://2218-102-89-22-226.ngrok-free.app
+///https://2218-102-89-22-226.ngrok-free.app
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
@@ -35,7 +36,8 @@ Future<void> main() async{
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
 
-    /// NOTE: Uncomment below 2 lines to enable landscape mode
+
+    /// Uncomment below 2 lines to enable landscape mode
     DeviceOrientation.landscapeLeft,
     DeviceOrientation.landscapeRight,
   ]);
@@ -96,7 +98,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         navigatorKey: navigatorKey,
         //this enables to perform navigation actions(push, pop
         //without needing a buildcontext)
-        home: const SignupScreen(),
+        home: const VerificationScreen(email: '',),
         );
       },
 

@@ -36,14 +36,14 @@ class ApiClient{
 
     _dio = Dio(options);
 
-    //we will have _dio taking care of all our timeouts now replacing conditions and catches of http
+    //we will have _dio taking care of all our timeouts now replacing conditions and catches of http, instead of our conventional http
 
-    //we could even do
+    //we could even do alternative as
    // _dio.options.connectTimeout = Duration(milliseconds: 60000);
 
 
     var cache = <Uri, Response>{};
-    //a function not retruning anything yet, we will declare it later
+    //a function not returning anything yet, we will declare it later
 
     //what is cache.
     //stores http response temporarily, so when you call same request without hitting api, you have the response faster
@@ -103,7 +103,7 @@ class ApiClient{
                  //clone the response
                  print("refreshing token");
                  final response = await Dio().post(
-                   '${baseUrl}auth/api/v1/token/refresh/',
+                   '${baseUrl}/token/refresh/',
                    data: {"refresh": userCredentials.refreshToken},
                    //that is the data  ()refresh token) we pass to it in order to get a new access token
                    //is the refresh token stored in the usercredentials
@@ -171,7 +171,7 @@ class ApiClient{
 
   void setAuthCookie(){
     final token = getToken();
-    //cookies are small piece of data  stored by client and sent with
+    //cookies or sometimes authenticationToken are small piece of data  stored by client and sent with
     //requests to server
     //cookies are used for authentication
     //receive cookies from server or send cookies
@@ -180,14 +180,12 @@ class ApiClient{
     }
   }
 
+
+
   Future<Response> get(
       String uri,{
         Map<String, dynamic>? queryParameters,
   }) async{
-    //queryparameter is a key -value map
-    //e.g...https://...../data?search=glutter&page=1
-    //they are appended to the url automatically..passing info into request
-
     try{
       setAuthCookie();
       final response = await _dio.get(
@@ -210,9 +208,6 @@ class ApiClient{
       FormData? formData,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? extraHeaders,
-
-        //extra headers is simply headers, it is custom http headers
-        //like passing jwtToken, content type. or custom metadata
 
       }) async{
     try{
