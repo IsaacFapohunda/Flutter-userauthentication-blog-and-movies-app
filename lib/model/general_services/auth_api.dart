@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -77,22 +78,11 @@ class AuthAPiImpl extends AuthApi{
       final httpResponse =
       await apiClient.post(Endpoints.signup, data: signUpRequest.toJson());
       final response = signUpResponseFromJson(jsonEncode(httpResponse.data));
-
-     // lets not track data now
-      // mixpanel.track("USER SIGNED UP SUCCESSFULLY", properties: {
-      //   "url": httpResponse.requestOptions.uri,
-      //   "method": httpResponse.requestOptions.method,
-      //   "status code": httpResponse.statusCode,
-      //   "status message": httpResponse.statusMessage,
-      // });
       return Right(response);
     } catch (err) {
-      debugPrint(err.toString());
-
-      // mixpanel.track("USER UNABLE TO SIGN UP", properties: {
-      //   "url": Endpoints.signup,
-      //   "error": err,
-      // });
+      if(err is DioException){
+        return Left(ApiException.getException(err));
+      }
       return Left(ApiException(err.toString()));
     }
   }

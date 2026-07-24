@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../model/movie/card_model.dart';
 import '../../model/movie/services.dart';
-import '../utilities/app_color.dart';
+import '../../model/theme/app_color.dart';
 import 'movie_screen.dart';
 // import 'package:get/get.dart';
 // import 'package:get/get_core/src/get_main.dart';

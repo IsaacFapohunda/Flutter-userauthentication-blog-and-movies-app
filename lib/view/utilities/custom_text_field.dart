@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/app_color.dart';
+import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 import 'package:springboot_flutter_bloggingapp/view/utilities/textstyle.dart';
 
 class customTextField extends StatefulWidget {

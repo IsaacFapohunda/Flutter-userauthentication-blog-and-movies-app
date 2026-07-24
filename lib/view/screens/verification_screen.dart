@@ -15,7 +15,7 @@ import 'package:springboot_flutter_bloggingapp/model/requests/send_otp_request.d
 // import '../../AddPayment/views/addPayment.dart';
 import '../../model/general_services/auth_services.dart';
 import '../utilities/app_button.dart';
-import '../utilities/app_color.dart';
+import '../../model/theme/app_color.dart';
 import '../utilities/back_button.dart';
 import '../utilities/textstyle.dart';
 

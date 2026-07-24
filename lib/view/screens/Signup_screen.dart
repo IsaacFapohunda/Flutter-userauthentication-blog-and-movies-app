@@ -1,6 +1,7 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +16,7 @@ import 'package:springboot_flutter_bloggingapp/model/requests/sign_up_request.da
 import 'package:springboot_flutter_bloggingapp/model/theme/change_theme_button_widget.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/utilities/app_button.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/app_color.dart';
+import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 
 import '../../model/gen/assets.gen.dart';
 import '../../model/general_services/auth_services.dart';
@@ -108,20 +109,39 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
     super.dispose();
   }
 
+  Future<bool> noInternet() async{
+    final connectivity = ref.read(internetProvider);
+    if(connectivity.status == ConnectivityStatus.disconnected){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text(
+            CustomStrings.noInternet1,
+            textAlign: TextAlign.center,
+          ))
+        );
+      });
+      return true;
+    }
+    return false;
+  }
 
-  void submit(){
-    final hasInternet = ref.read(internetProvider).status == ConnectivityStatus.connected;
+
+
+  void submit() async{
+    if(await noInternet()) return;
     ref.read(signUpProvider.notifier).signUp(
         firstName: firstNameController.text,
         email: emailController.text,
         password: passwordController.text,
         confirmPassword: passwordController2.text,
-        hasInternet: hasInternet);
+        //hasInternet: hasInternet
+        );
   }
 
   @override
   Widget build(BuildContext context) {
     height: MediaQuery.of(context).size.height;
+    final internetState = ref.watch(internetProvider);
     final signupState = ref.watch(signUpProvider);
 
 
@@ -140,19 +160,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
         );
       }
     });
-
-
-    // SystemChrome.setSystemUIOverlayStyle(
-    //   SystemUiOverlayStyle(
-    //     statusBarColor: Colors.transparent, // Theme.of(context).cardColor,
-    //     statusBarBrightness: Theme.of(context).brightness == Brightness.dark
-    //         ? Brightness.dark
-    //         : Brightness.light,
-    //     statusBarIconBrightness: Theme.of(context).brightness == Brightness.dark
-    //         ? Brightness.light
-    //         : Brightness.dark,
-    //   ),
-    //);
 
 
     return Scaffold(
@@ -238,6 +245,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
                ),
 
 
+
            signupState.request.when(
                idle: (){
                  return AppButton(onPressed: submit,
@@ -258,7 +266,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
                      ),
                      AppButton(
                        onPressed: submit,
-                       label: 'Try agaIN',
+                       label: 'Try again',
                      ),
                    ],
                  );

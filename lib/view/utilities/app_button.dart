@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:springboot_flutter_bloggingapp/view/utilities/textstyle.dart';
 
-import 'app_color.dart';
+import '../../model/theme/app_color.dart';
 
 class AppButton extends StatelessWidget {
   VoidCallback onPressed;
@@ -35,6 +35,13 @@ class AppButton extends StatelessWidget {
         child: Center(
           child: Text(
               label,
+            style: TextStyle(
+              color:
+              Theme.of(context).brightness == Brightness.dark
+                ? kWhite
+                : kBlack
+              ,
+            ),
           ),
         ),
       ),

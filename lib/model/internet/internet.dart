@@ -6,8 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 
-//using state notifier you dont need setstate because this state notifier riverpod, rebuilds widget immediately it detects a change of state
-//it is also same as stateprovider just that it is used for less complex cases
+//serves the ux
 enum ConnectivityStatus { connected, disconnected }
 
 class ConnectivityState {

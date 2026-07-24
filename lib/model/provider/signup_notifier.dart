@@ -37,17 +37,18 @@ class SignUpNotifier extends StateNotifier<SignupState>{
      required String email,
      required String password,
      required String confirmPassword,
-     required bool hasInternet
+     //required bool hasInternet
 }) async{
 
      resetValidation();
 
-     if(!hasInternet){
-       state = state.copyWith(
-         request: ApiResult.error("No internet connection"),
-       );
-       return;
-     }
+     //Api exception already handle this
+     // if(!hasInternet){
+     //   state = state.copyWith(
+     //     request: ApiResult.error("No internet connection"),
+     //   );
+     //   return;
+     // }
      if(firstName.trim().isEmpty){
        state = state.copyWith(
          firstNameError: true,
@@ -63,6 +64,12 @@ class SignUpNotifier extends StateNotifier<SignupState>{
      if(password != confirmPassword){
        state = state.copyWith(
          confirmPasswordError: true,
+       );
+       return;
+     }
+     if(!isValidEmail(email.trim())){
+       state = state.copyWith(
+         emailError: true,
        );
        return;
      }

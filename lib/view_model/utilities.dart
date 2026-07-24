@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../view/utilities/app_color.dart';
+import '../model/theme/app_color.dart';
 
 final userImageProvider = Provider<ImageUpload>((ref) => ImageUpload());
 class ImageUpload{

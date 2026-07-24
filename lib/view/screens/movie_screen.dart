@@ -4,7 +4,7 @@ import 'package:springboot_flutter_bloggingapp/view/screens/search_movie.dart';
 
 import '../../model/movie/card_model.dart';
 import '../../model/movie/services.dart';
-import '../utilities/app_color.dart';
+import '../../model/theme/app_color.dart';
 import '../utilities/textstyle.dart';
 
 import 'package:http/http.dart' as http;

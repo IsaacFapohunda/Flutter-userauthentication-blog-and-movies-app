@@ -42,11 +42,6 @@ Future<void> main() async{
     DeviceOrientation.landscapeRight,
   ]);
 
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent),
-
-  );
 
 
   const counter = 0;
@@ -98,7 +93,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         navigatorKey: navigatorKey,
         //this enables to perform navigation actions(push, pop
         //without needing a buildcontext)
-        home: const VerificationScreen(email: '',),
+        home: const SignupScreen(),
         );
       },
 

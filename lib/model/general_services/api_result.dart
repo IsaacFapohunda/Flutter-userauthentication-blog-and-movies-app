@@ -41,7 +41,7 @@ class ApiResult<T> {
     switch (status) {
       case Status.idle:
         {
-          return const SizedBox.shrink();
+          return idle();
         }
       case Status.loading:
         {

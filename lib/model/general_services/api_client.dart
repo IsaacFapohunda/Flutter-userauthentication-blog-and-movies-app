@@ -13,7 +13,10 @@ import '../../view/utilities/constants.dart';
 import 'exceptions.dart';
 
 
-
+final apiClientProvider = Provider<ApiClient>((ref){
+  final tokenRepository = ref.watch(tokenRepositoryProvider);
+  return ApiClient(tokenRepository: tokenRepository);
+});
 
 
 class ApiClient{
@@ -220,8 +223,7 @@ class ApiClient{
       if (formData != null) {
         _dio.options.contentType = "application/json";
       }
-      throw ApiException(e.toString());
-     // throw ApiException.getException(e);
+      rethrow;
     }
 
   }

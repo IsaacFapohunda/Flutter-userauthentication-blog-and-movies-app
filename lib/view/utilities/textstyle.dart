@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/app_color.dart';
+import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 import 'package:flutter/material.dart';
 
 
-import 'app_color.dart';
+import '../../model/theme/app_color.dart';
 
 
 TextStyle kTextStyle1(height) => TextStyle(

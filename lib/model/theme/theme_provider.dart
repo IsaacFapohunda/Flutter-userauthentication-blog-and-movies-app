@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/app_color.dart';
+import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 import '../../main.dart';
 
 

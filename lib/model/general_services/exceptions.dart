@@ -16,17 +16,6 @@ const kNotFoundError = 'An error occured, please try again.';
 const kRequestCancelledError = 'Request to server was cancelled.';
 
 
-// class ApiException implements Exception {
-//   ApiException(this.errorMessage);
-//   String errorMessage;
-//
-//   @override
-//   String toString() {
-//     return errorMessage;
-//   }
-// }
-
-
 
 
 class ApiException implements Exception{
@@ -64,63 +53,30 @@ class ApiException implements Exception{
     }
     break;
       case DioExceptionType.badResponse:
-      /* cases where we have a custom error message from the APIs
-        We'll have a response from the APIs [for some status codes],
-        IF THERE IS A PAYLOAD,
-        {
-          "status": false,
-          "message": "Incorrect credentials",
-        }
-        we extract the value present in the key=>[message]
-        */
 
         try{
-          if(error.response?.data != null){
-            if((error.response?.data as Map)['errors'] is String){
-              if(((error.response!.data as Map)['errors']).toString() == 'failed'){
-                return OtherExceptions(
-                  (((error.response!.data as Map)['message']).toString()),
-                );
-              }else{
-                return OtherExceptions(
-                  (((error.response!.data as Map)['errors']).toString()),
-                );
-              }
-            }
+          //be it thirdparty api data or our app api data, django, spring, it covers everything
+          final data = error.response?.data;
+          final statusCode = error.response?.statusCode;
 
-            if ((error.response!.data as Map)['message'] is Map) {
-              return OtherExceptions(
-                ((error.response!.data as Map)['message'] as Map)['message'],
-              );
-            }  else if ((error.response!.data as Map)['errors'] is Map) {
-              return OtherExceptions(
-                (((error.response!.data as Map)['errors']).toString()),
-              );
-            }
+          if(data != null && data is Map) {
+            String serverResponse = data['responseMessage']
+                ?? data['message'] ?? data['detail'] ?? data['error'];
 
-            else if ((error.response!.data) is Map) {
-              if ((error.response!.data as Map)['detail'] is String) {
-                return OtherExceptions(
-                  ((error.response!.data as Map))['detail'],
-                );
-              } else
-              if ((error.response!.data as Map)['message'] is String){
-                return OtherExceptions(
-                  ((error.response!.data as Map))['message'],
-                );
-              } else {
-                return OtherExceptions(
-                  ((error.response!.data as Map)).toString(),
-                );
-              }
-            }
-            return OtherExceptions((error.response!.data as Map).toString());
+            return OtherExceptions(serverResponse.toString());
+
           }
+           if(data['errors'] is List){
+             return OtherExceptions((data['errors'] as List).join(', '));
+           }
+
           else{
             // IF THERE IS NO PAYLOAD, we check for respective status codes and assign them fit error messages
             switch (error.response?.statusCode) {
+
               case 500:
                 return InternalServerException();
+
               case 404:
               case 502:
                 return OtherExceptions(kNotFoundError);
@@ -129,6 +85,8 @@ class ApiException implements Exception{
               case 403:
               case 401:
                 return UnAuthorizedException();
+
+
               default:
               // default exception error message
                 return OtherExceptions(kDefaultError);
