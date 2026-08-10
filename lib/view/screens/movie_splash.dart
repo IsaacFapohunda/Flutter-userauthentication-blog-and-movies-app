@@ -34,7 +34,7 @@ class _Splash1State extends State<Splash1> {
     Size size = MediaQuery.of(context).size;
 
     return Scaffold(
-        backgroundColor: primaryColor,
+        backgroundColor: kPrimaryColor,
         body:
         Align(
           alignment: Alignment.center,

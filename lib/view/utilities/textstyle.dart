@@ -90,7 +90,7 @@ body4(color, decoration) {
 
 apptextstyle(){
   return TextStyle(
-    color: primaryColor,
+    color:  kPrimaryColor,
   );
 }
 

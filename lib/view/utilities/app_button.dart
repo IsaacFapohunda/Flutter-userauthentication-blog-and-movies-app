@@ -31,15 +31,16 @@ class AppButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(30),
             color: Theme.of(context).brightness == Brightness.dark
                 ? kWhite
-                : kBlack),
+                : kBlack
+        ),
         child: Center(
           child: Text(
               label,
             style: TextStyle(
               color:
               Theme.of(context).brightness == Brightness.dark
-                ? kWhite
-                : kBlack
+                ? kBlack
+                : kWhite
               ,
             ),
           ),

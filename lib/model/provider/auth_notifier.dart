@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:springboot_flutter_bloggingapp/model/general_services/api_result.dart';
@@ -5,22 +7,43 @@ import 'package:springboot_flutter_bloggingapp/model/general_services/auth_expor
 
 import '../requests/send_otp_request.dart';
 import '../requests/sign_up_request.dart';
-import 'package:springboot_flutter_bloggingapp/model/state/signup_state.dart';
+import 'package:springboot_flutter_bloggingapp/model/state/auth_state.dart';
 
-final signUpProvider = StateNotifierProvider<SignUpNotifier, SignupState>((ref){
-  return SignUpNotifier(ref.read(authServiceProvider));
+
+//this class handles all auth notifier and state
+final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref){
+  return AuthNotifier(ref.read(authServiceProvider));
 });
 
-class SignUpNotifier extends StateNotifier<SignupState>{
+class AuthNotifier extends StateNotifier<AuthState>{
    final AuthService authService;
 
-   SignUpNotifier(this.authService) : super(SignupState.initial());
+   AuthNotifier(this.authService) : super(AuthState.initial());
 
 
    bool isValidEmail(String email) {
      final RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$');
      return emailRegex.hasMatch(email);
    }
+
+
+   int countdown = 59;
+   late Timer timer;
+   bool coountDownOver = false;
+
+
+
+   void startCountdown() {
+     timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+       if (countdown > 0) {
+         countdown--;
+       } else {
+         coountDownOver = true;
+         timer.cancel();
+       }
+     });
+   }
+
 
    void resetValidation(){
      state = state.copyWith(
@@ -29,6 +52,7 @@ class SignUpNotifier extends StateNotifier<SignupState>{
        passwordError: false,
        confirmPasswordError: false,
        errorMessage: '',
+       wrongOtpCodeError: false,
      );
    }
 
@@ -42,13 +66,6 @@ class SignUpNotifier extends StateNotifier<SignupState>{
 
      resetValidation();
 
-     //Api exception already handle this
-     // if(!hasInternet){
-     //   state = state.copyWith(
-     //     request: ApiResult.error("No internet connection"),
-     //   );
-     //   return;
-     // }
      if(firstName.trim().isEmpty){
        state = state.copyWith(
          firstNameError: true,
@@ -102,11 +119,20 @@ class SignUpNotifier extends StateNotifier<SignupState>{
      }
 
 
-     Future<void> verifyOtp(OtpRequest request) async{
+     Future<void> verifyOtp({required int? otp}) async{
+     resetValidation();
+
+     if(otp == null){
+       state = state.copyWith(
+         wrongOtpCodeError: true,
+       );
+       return;
+     }
+
      state = state.copyWith(
        request: ApiResult.loading("Verifying Otp"),
      );
-     final response = await authService.verifyOtp(request);
+     final response = await authService.verifyOtp(OtpRequest(otp: otp));
      response.fold((failure){
        state = state.copyWith(
          request: ApiResult.error(failure.message),

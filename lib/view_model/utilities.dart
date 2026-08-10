@@ -32,11 +32,11 @@ class ImageUpload{
                 _pickImg(ImageSource.camera, imgPickFn);
               }, icon: const Icon(Icons.photo_camera,
               size: 50,
-              color: primaryColor,
+              color:  kPrimaryColor,
             ),
               label: const Text('Camera',
                 style: TextStyle(
-                  color: primaryColor,
+                  color:  kPrimaryColor,
                 ),
               ),),
             TextButton.icon(
@@ -45,11 +45,11 @@ class ImageUpload{
                 _pickImg(ImageSource.gallery, imgPickFn);
               }, icon: const Icon(Icons.file_copy,
               size: 50,
-              color: primaryColor,
+              color:  kPrimaryColor,
             ),
               label: const Text('Gallery',
               style: TextStyle(
-                color: primaryColor,
+                color:  kPrimaryColor,
               ),
               ),
               ),

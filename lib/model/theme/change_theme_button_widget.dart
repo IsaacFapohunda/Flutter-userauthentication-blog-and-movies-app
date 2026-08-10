@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart';
+import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 import 'package:springboot_flutter_bloggingapp/model/theme/theme_provider.dart';
 
 class ChangeThemeButtonWidget extends ConsumerStatefulWidget {
@@ -15,6 +16,7 @@ class _ChangeThemeButtonWidgetState extends ConsumerState<ChangeThemeButtonWidge
   Widget build(BuildContext context) {
     final themeProvider = ref.watch(themeDataProvider);
     return Switch.adaptive(
+      activeTrackColor: kWhite,
       value: themeProvider.isDarkMode,
       onChanged: (value) {
         themeProvider.toggleTheme(isOn: value);

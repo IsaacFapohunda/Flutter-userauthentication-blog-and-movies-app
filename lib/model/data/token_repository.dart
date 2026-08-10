@@ -88,8 +88,8 @@ class TokenRepositoryImpl implements TokenRepository{
   //       .updateUserCredentials(_userCredentials.copyWithToken(null, null));
   //   await tokenRepository.deleteUserCredentials();
   //   // await refreshUser();
-  //   mixpanel.track("USER LOGGED OUT", properties: {});
-  //   Get.offAll(() => const LoginScreen());
+  //   maybe mix panel it
+  //   Go back to login screen
   // }
 
 }

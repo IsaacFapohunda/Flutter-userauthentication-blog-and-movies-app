@@ -29,6 +29,7 @@ class ThemeProvider extends ChangeNotifier {
     if (isOn) {
       themeMode = ThemeMode.dark;
       await prefs.setBool('isDarkTheme', true);
+
     } else {
       themeMode = ThemeMode.light;
       await prefs.setBool('isDarkTheme', false);
@@ -45,29 +46,28 @@ class ThemeProvider extends ChangeNotifier {
 
 class AppThemes {
   static final darkTheme = ThemeData(
-      scaffoldBackgroundColor: backgroundColorDarkTheme,
+      scaffoldBackgroundColor: backgroundColorDarkThemeDark,
       colorScheme: const ColorScheme.dark(),
       fontFamily: 'SegUI',
-      primaryColor: whiteColor,
+      primaryColor: kWhite,
       textTheme: const TextTheme(
         bodyLarge: TextStyle(
-          color: whiteColor,
+          color: kWhite,
           fontWeight: FontWeight.bold,
           fontSize: 18,
         ),
         bodyMedium: TextStyle(
-          color: whiteColor,
+          color: kWhite,
           fontSize: 16,
         ),
       ),
-      iconTheme: const IconThemeData(color: whiteColor),
-      cardColor: primaryColor,
-      appBarTheme: const AppBarTheme(
-
-        backgroundColor: primaryColor,
-        surfaceTintColor: primaryColor,
-        titleTextStyle: TextStyle(
-          color: whiteColor,
+      iconTheme: const IconThemeData(color: kWhite),
+      cardColor: kPrimaryColor,
+      appBarTheme: AppBarTheme(
+        backgroundColor: grey2,
+        surfaceTintColor: grey2,
+        titleTextStyle: const TextStyle(
+          color: kWhite,
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
@@ -80,47 +80,47 @@ class AppThemes {
         color: indicatorColor1,
         refreshBackgroundColor: indicatorColor3,
       ),
-      highlightColor: primaryColor.withOpacity(0.2),
+      highlightColor: kPrimaryColor.withOpacity(0.2),
       indicatorColor: accentColor,
       shadowColor: Colors.transparent,
       canvasColor: Colors.black.withOpacity(0.7)
   );
 
   static final lightTheme = ThemeData(
-      scaffoldBackgroundColor: backgroundColorLightTheme,
+      scaffoldBackgroundColor: backgroundColorLightThemeWhite,
       colorScheme: const ColorScheme.light(),
       fontFamily: 'SegUI',
       primarySwatch: primaryColors,
-      primaryColor: primaryColor,
+      primaryColor: kBlack,
       textTheme: const TextTheme(
         bodyLarge: TextStyle(
-          color: primaryColor,
+          color: kBlack,
           fontWeight: FontWeight.bold,
           fontSize: 18,
         ),
-        bodyMedium: TextStyle(color: primaryColor, fontSize: 16),
+        bodyMedium: TextStyle(color: kBlack, fontSize: 16),
       ),
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
         backgroundColor: accentColor,
       ),
-      iconTheme: const IconThemeData(color: primaryColor),
-      cardColor: whiteColor,
+      iconTheme: const IconThemeData(color: kPrimaryColor),
+      cardColor: kWhite,
       appBarTheme: const AppBarTheme(
-        surfaceTintColor: whiteColor,
-        backgroundColor: whiteColor,
+        surfaceTintColor: kWhite,
+        backgroundColor: kWhite,
         titleTextStyle: TextStyle(
-          color: primaryColor,
+          color: kBlack,
           fontWeight: FontWeight.bold,
           fontSize: 20,
         ),
-        iconTheme: IconThemeData(color: primaryColor),
+        iconTheme: IconThemeData(color: kBlack),
       ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         linearTrackColor: indicatorColor2,
         color: indicatorColor1,
         refreshBackgroundColor: indicatorColor3,
       ),
-      highlightColor: primaryColor.withOpacity(0.2),
+      highlightColor: kPrimaryColor.withOpacity(0.2),
       indicatorColor: accentColor,
       shadowColor: Colors.grey[400],
       canvasColor: Colors.white.withOpacity(0.5)

@@ -6,6 +6,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'card_model.dart';
 
 
+///so i extracted this code from a movies personal app i made with Get and http package in order to
+///have a mutli feature app, would sort it out
+
 final movieRequestProvider = Provider<MovieRequest>((ref)=>MovieRequest());
 
 class MovieRequest{

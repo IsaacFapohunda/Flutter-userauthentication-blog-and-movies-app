@@ -126,7 +126,7 @@ class _SearchMovieState extends State<SearchMovie> {
                               return Padding(
                                 padding: const EdgeInsets.all(15.0),
                                 child: Container(
-                                  color: primaryColor,
+                                  color: kPrimaryColor,
                                   height: 300,
                                   width: 300,
                                   child: Padding(

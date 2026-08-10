@@ -2,28 +2,23 @@ import 'package:flutter/material.dart';
 const primaryColors = MaterialColor(
  0xFF30475E, // primaryColor
  <int, Color>{
-  50: primaryColor,
-  100: primaryColor,
-  200: primaryColor,
-  300: primaryColor,
-  400: primaryColor,
-  500: primaryColor,
-  600: primaryColor,
-  700: primaryColor,
-  800: primaryColor,
-  900: primaryColor,
+  50:kPrimaryColor,
+  100: kPrimaryColor,
+  200: kPrimaryColor,
+  300: kPrimaryColor,
+  400: kPrimaryColor,
+  500: kPrimaryColor,
+  600: kPrimaryColor,
+  700: kPrimaryColor,
+  800: kPrimaryColor,
+  900: kPrimaryColor,
  },
 );
 
 
 
-const primaryColor = Color(0Xff0D2755);
-const secondarycolor = Color(0XffDBECFF);
-
   const kPrimaryColor = Color(0Xff00ed85);
-  const kWhite = Color(0xFFFFFF);
   const kSecondaryColor = Color.fromARGB(255, 242, 154, 72);
- const Color kBlack = Color(0xFF1B1C1E);
   Color grey1 = const Color(0xFF333333);
   Color grey2 = const Color(0xFF4F4F4F);
   Color grey3 = const Color(0xFF828282);
@@ -42,13 +37,13 @@ const secondarycolor = Color(0XffDBECFF);
 
 //
 // const primaryColor = Color(0xFF30475E);
-const backgroundColorLightTheme = Color(0xFFF5F5F5);
-const backgroundColorDarkTheme = Color(0xFF041C32);
+const backgroundColorLightThemeWhite = Color(0xFFFFFFFF);
+const backgroundColorDarkThemeDark = Color(0xFF000000);
 const accentColor = Color(0xFFC92BCE);
 const splashBackColor1 = Color(0xFF13123F);
 const splashBackColor2 = Color(0xFFD932C7);
-const whiteColor = Color(0xFFFFFFFF);
-const blackColor = Color(0xFF000000);
+const kWhite = Color(0xFFFFFFFF);
+const kBlack = Color(0xFF000000);
 
 const onboardingButtonColor1 = Color(0xFF21005D);
 const onboardingButtonColor2 = Color(0xFFD932C7);

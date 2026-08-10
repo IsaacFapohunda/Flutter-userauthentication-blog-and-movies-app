@@ -10,7 +10,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:springboot_flutter_bloggingapp/model/general_services/api_result.dart';
 import 'package:springboot_flutter_bloggingapp/model/provider/navigation_bar_provider.dart';
-import 'package:springboot_flutter_bloggingapp/model/provider/signup_notifier.dart';
+import 'package:springboot_flutter_bloggingapp/model/provider/auth_notifier.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/login_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/sign_up_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/theme/change_theme_button_widget.dart';
@@ -21,7 +21,7 @@ import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 import '../../model/gen/assets.gen.dart';
 import '../../model/general_services/auth_services.dart';
 import '../../model/internet/internet.dart';
-import '../../model/state/signup_state.dart';
+import '../../model/state/auth_state.dart';
 import '../utilities/constants.dart';
 import '../utilities/custom_text_field.dart';
 import '../utilities/screen_util.dart';
@@ -65,11 +65,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
 
 
 
-  bool isValidEmail(String email) {
-    final RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@[\w-]+(\.[\w-]+)+$');
-    return emailRegex.hasMatch(email);
-  }
-
   @override
    initState() {
     // TODO: implement initState
@@ -109,6 +104,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
     super.dispose();
   }
 
+  //api exception already does this aiit
   Future<bool> noInternet() async{
     final connectivity = ref.read(internetProvider);
     if(connectivity.status == ConnectivityStatus.disconnected){
@@ -129,7 +125,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
 
   void submit() async{
     if(await noInternet()) return;
-    ref.read(signUpProvider.notifier).signUp(
+    ref.read(authProvider.notifier).signUp(
         firstName: firstNameController.text,
         email: emailController.text,
         password: passwordController.text,
@@ -142,11 +138,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
   Widget build(BuildContext context) {
     height: MediaQuery.of(context).size.height;
     final internetState = ref.watch(internetProvider);
-    final signupState = ref.watch(signUpProvider);
+    final signupState = ref.watch(authProvider);
 
 
 
-    ref.listen<SignupState>(signUpProvider, (previous, next) {
+    ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.request.isSuccess) {
         Navigator.push(context, MaterialPageRoute(builder: (context) => const VerificationScreen(email: '',)));
 
