@@ -72,11 +72,7 @@ class MyApp extends ConsumerStatefulWidget {
 }
 
 class _MyAppState extends ConsumerState<MyApp> {
-  // This widget is the root of your application.
-  // HttpClient createHttpClient(SecurityContext context){
-  //   return super.createHttpClient(context)
-  //       ..badCertificateCallback = (X509Certificate cert, String host, int port) => true;
-  // }
+
 
   Widget build(BuildContext context) {
     final theme = ref.watch(themeDataProvider);

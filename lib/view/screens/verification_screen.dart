@@ -15,6 +15,7 @@ import 'package:springboot_flutter_bloggingapp/model/state/auth_state.dart';
 // import '../../../../constants/textstyle.dart';
 // import '../../../../services/user_authentication.dart';
 // import '../../AddPayment/views/addPayment.dart';
+import '../../main.dart';
 import '../../model/general_services/auth_services.dart';
 import '../utilities/app_button.dart';
 import '../../model/theme/app_color.dart';
@@ -38,9 +39,13 @@ class _VerificationScreenConsumerState
   late Timer timer;
   bool coountDownOver = false;
   @override
+
+
+
   void initState() {
     super.initState();
     startCountdown();
+
   }
 
   void startCountdown() {
@@ -64,16 +69,19 @@ class _VerificationScreenConsumerState
   String wrongCode = '';
   bool isLoading = false;
   String accessCode = "1255";
+  int? otp = prefs.getInt('otp');
+
+
 
 
   void submit(){
     code = code.replaceAll('null', '');
 
-    int encodedEmail = int.parse(code);
+    int encodedCode = int.parse(code);
     // print('VerificationCode = $code');
     Text('Your verification code is $code');
-    ref.read(authProvider.notifier).verifyOtp(otp: encodedEmail);
-       }
+    ref.read(authProvider.notifier).verifyOtp(otp: encodedCode, email: widget.email);
+  }
 
 
 
@@ -82,16 +90,18 @@ class _VerificationScreenConsumerState
    final verificationState = ref.watch(authProvider);
 
     ref.listen<AuthState>(authProvider, (previous, next){
-      if(next.request.isSuccess){
+      if(previous?.request.isSuccess != true && next.request.isSuccess){
         Navigator.push(context, MaterialPageRoute(builder: (context) => const MoviesScreen()));
 
       }
-      if(next.request.isError){
+    else if(previous?.request.isError != true && next.request.isError){
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(next.request.message)),
         );
       }
     });
+
+
 
 
   return Scaffold(
@@ -108,7 +118,7 @@ class _VerificationScreenConsumerState
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                "Verify your new account ",
+                "Verify your new account",
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,

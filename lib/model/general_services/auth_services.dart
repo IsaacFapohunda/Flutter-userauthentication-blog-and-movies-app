@@ -7,6 +7,7 @@ import 'package:springboot_flutter_bloggingapp/model/data/token_repository.dart'
 import 'package:springboot_flutter_bloggingapp/model/response/sign_up_response.dart';
 //import 'package:springboot_flutter_bloggingapp/model/services/auth_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../main.dart';
 import '../requests/login_request.dart';
 import '../requests/send_otp_request.dart';
 import '../requests/sign_up_request.dart';
@@ -93,13 +94,18 @@ class AuthServiceImpl extends AuthService{
     return response.fold((failure){
       return Left(failure);
     }, (verifyOtpResponse) async{
+
       log("verifyOtpResponse: $verifyOtpResponse");
-      if(verifyOtpResponse == 'Confirmed') {
-        return const Right(true);
-      } else{
-        return Left(ApiException(verifyOtpResponse));
-      }
+      return const Right(true);
     }
+    //         (verifyOtpResponse) async{
+    //   log("verifyOtpResponse: $verifyOtpResponse");
+    //   if(verifyOtpResponse == 'Confirmed') {
+    //     return const Right(true);
+    //   } else{
+    //     return Left(ApiException(verifyOtpResponse));
+    //   }
+    // }
     );
   }}
 

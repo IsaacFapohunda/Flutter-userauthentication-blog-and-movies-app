@@ -56,6 +56,8 @@ class AuthNotifier extends StateNotifier<AuthState>{
      );
    }
 
+
+
    Future<void> signUp({
      required String firstName,
      required String email,
@@ -119,7 +121,8 @@ class AuthNotifier extends StateNotifier<AuthState>{
      }
 
 
-     Future<void> verifyOtp({required int? otp}) async{
+     Future<void> verifyOtp({required int? otp,
+       required String email}) async{
      resetValidation();
 
      if(otp == null){
@@ -132,7 +135,7 @@ class AuthNotifier extends StateNotifier<AuthState>{
      state = state.copyWith(
        request: ApiResult.loading("Verifying Otp"),
      );
-     final response = await authService.verifyOtp(OtpRequest(otp: otp));
+     final response = await authService.verifyOtp(OtpRequest(otp: otp, email: email));
      response.fold((failure){
        state = state.copyWith(
          request: ApiResult.error(failure.message),

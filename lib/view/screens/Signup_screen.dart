@@ -18,6 +18,7 @@ import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.
 import 'package:springboot_flutter_bloggingapp/view/utilities/app_button.dart';
 import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 
+import '../../main.dart';
 import '../../model/gen/assets.gen.dart';
 import '../../model/general_services/auth_services.dart';
 import '../../model/internet/internet.dart';
@@ -105,6 +106,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
   }
 
   //api exception already does this aiit
+  //BUT WHEN THERE IS NO CALL
   Future<bool> noInternet() async{
     final connectivity = ref.read(internetProvider);
     if(connectivity.status == ConnectivityStatus.disconnected){
@@ -121,6 +123,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
     return false;
   }
 
+
+  int? otp = prefs.getInt('otp');
 
 
   void submit() async{
@@ -144,7 +148,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
 
     ref.listen<AuthState>(authProvider, (previous, next) {
       if (next.request.isSuccess) {
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const VerificationScreen(email: '',)));
+
+        Navigator.push(context, MaterialPageRoute(builder: (context) => VerificationScreen(email: emailController.text,)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(otp.toString())),
+        );
 
       }
 
