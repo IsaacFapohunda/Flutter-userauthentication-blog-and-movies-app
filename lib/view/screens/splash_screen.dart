@@ -1,12 +1,11 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/foundation.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:springboot_flutter_bloggingapp/model/internet/no_internet_widget.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/strings.dart';
+import 'package:springboot_flutter_bloggingapp/view_model/widgets/no_internet_widget.dart';
 
 import '../../model/gen/assets.gen.dart';
 import '../../model/internet/internet.dart';
+import '../../view_model/constants/strings.dart';
 
 
 

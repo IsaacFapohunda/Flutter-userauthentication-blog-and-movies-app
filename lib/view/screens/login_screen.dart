@@ -1,296 +1,231 @@
-// import 'package:flutter/foundation.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:flutter_riverpod/flutter_riverpod.dart';
-// import 'package:loading_animation_widget/loading_animation_widget.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:springboot_flutter_bloggingapp/view/screens/Signup_screen.dart';
-// import 'package:springboot_flutter_bloggingapp/view/utilities/app_image.dart';
-// import 'package:springboot_flutter_bloggingapp/view/utilities/app_color.dart';
-// import 'package:springboot_flutter_bloggingapp/view/utilities/textstyle.dart';
-//
-// import '../../model/general_services/http.dart';
-// import '../../model/internet/internet.dart';
-// import '../utilities/app_button.dart';
-// import '../widgets/custom_text_field.dart';
-// import 'Forgot_password_screen.dart';
-//
-//
-//
-//
-//
-//
-// class LoginScreen extends ConsumerStatefulWidget {
-//   const LoginScreen({super.key});
-//
-//   @override
-//   ConsumerState<LoginScreen> createState() => _LoginScreenState();
-// }
-//
-// class _LoginScreenState extends ConsumerState<LoginScreen> {
-//   TextEditingController emailController = TextEditingController();
-//   TextEditingController passwordCcontroller = TextEditingController();
-//   bool isLoading = false;
-//   bool emailError = false;
-//   bool passwordError = false;
-//   String firstName = '';
-//   String lastName = '';
-//   String token = '';
-//   String isVerified = '';
-//
-//
-//   @override
-//   void dispose() {
-//     emailController.dispose();
-//     passwordCcontroller.dispose();
-//     super.dispose();
-//   }
-//
-//   void initState() {
-//     super.initState();
-//
-//   }
-//
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     final connectivityState = ref.watch(internetProvider);
-//     Size size = MediaQuery.of(context).size;
-//     Size height = MediaQuery.of(context).size;
-//
-//     final loginref = ref.watch(userAuthProvider);
-//     return Scaffold(
-//       body: SingleChildScrollView(
-//         child: Column(
-//           children: [
-//             Container(
-//                 height: 250,
-//                 width: MediaQuery.of(context).size.width,
-//                 decoration: const BoxDecoration(
-//                     color: kPrimaryColor,
-//                     image: DecorationImage(
-//                       image: AssetImage(
-//                         kHumanresources,
-//                       ),
-//                     )),
-//                 child: Center(
-//                   child: Image.asset(
-//                     kHumanresources,
-//                     width: 100,
-//                     height: 100,
-//                   ),
-//                 )),
-//             Padding(
-//               padding: const EdgeInsets.symmetric(horizontal: 15),
-//               child: Column(
-//                 mainAxisAlignment: MainAxisAlignment.start,
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   const SizedBox(
-//                     height: 15,
-//                   ),
-//                   Text(
-//                     "Welcome back, Jennifer",
-//                     style: kTextStyle1(height),
-//                   ),
-//                   const Text('Please log in to continue'),
-//                   const SizedBox(
-//                     height: 15,
-//                   ),
-//                   mytextField.CustomTextFieldd(
-//                       errorCondition: emailError,
-//                       error: 'Enter a valid email',
-//                       controller: emailController,
-//                       label: "Email"),
-//                   const SizedBox(
-//                     height: 20,
-//                   ),
-//                   mytextField.CustomTextFieldd(
-//                     errorCondition: passwordError,
-//                     error: 'Incorrect password',
-//                     label: "Password",
-//                     isobsure: true,
-//                     controller: passwordCcontroller,
-//                     ispassword: true,
-//                   ),
-//                   const SizedBox(
-//                     height: 10,
-//                   ),
-//                   GestureDetector(
-//                     onTap: () {
-//                       Navigator.push(
-//                           context,
-//                           MaterialPageRoute(
-//                             builder: (context) => const ForgetPassword(),
-//                           ));
-//                     },
-//                     child: Container(
-//                       alignment: Alignment.bottomRight,
-//                       child: const Text(
-//                         "Forgot password?",
-//                         style: TextStyle(
-//                           fontSize: 15,
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                   const SizedBox(
-//                     height: 10,
-//                   ),
-//                   isLoading
-//                       ? Center(
-//                       child: LoadingAnimationWidget.inkDrop(
-//                           color: kPrimaryColor, size: 25))
-//                       : AppButton(
-//                     label: "Login",
-//                     onPressed: () async {
-//                       print("££33");
-//                       if (connectivityState.status ==
-//                           ConnectivityStatus.disconnected) {
-//                         WidgetsBinding.instance.addPostFrameCallback((_) {
-//                           ScaffoldMessenger.of(context).showSnackBar(
-//                             const SnackBar(
-//                               content: Text('No internet connection'),
-//                             ),
-//                           );
-//                         });
-//                       } else {
-//                         setState(() {
-//                           isLoading = true;
-//                         });
-//                         if (emailController.text.isNotEmpty &&
-//                             passwordCcontroller.text.isNotEmpty) {
-//                           String message = await loginref.userLogin(
-//                               emailController.text,
-//                               passwordCcontroller.text);
-//
-//                           if (message == 'LoggedIn') {
-//                             setState(() {
-//                               isLoading = false;
-//                             });
-//                             SharedPreferences prefs =
-//                             await SharedPreferences.getInstance();
-//
-//                             setState(() {
-//                               firstName = prefs.getString('firstName')!;
-//                               lastName = prefs.getString('lastName')!;
-//                               token = prefs.getString('token')!;
-//                               //isVerified = prefs.getString('isVerified')!;
-//                             });
-//                             final String name = '$firstName $lastName';
-//                             if (isVerified == false) {
-//                               if (kDebugMode) {
-//                                 print('Not verified yet');
-//                               }
-//                               // Navigator.push(
-//                               //     context,
-//                               //     MaterialPageRoute(
-//                               //       builder: (context) =>
-//                               //           VerificationScreen(
-//                               //               email: emailController.text),
-//                               //     ));
-//                               setState(() {
-//                                 isLoading = false;
-//                               });
-//                             }
-//                             else {
-//                               // Navigator.push(
-//                               //     context,
-//                               //     MaterialPageRoute(
-//                               //       builder: (context) =>
-//                               //          // CarDetailsReg(),
-//                               //     ));
-//
-//
-//                               // Navigator.pushReplacement(
-//                               //     context,
-//                               //     MaterialPageRoute(
-//                               //       builder: (context) =>
-//                               //            PassengerHomeScreen(name:name),
-//                               //     ));
-//
-//                               setState(() {
-//                                 isLoading = false;
-//                               });
-//                             }
-//                           } else {
-//                             WidgetsBinding.instance
-//                                 .addPostFrameCallback((_) {
-//                               ScaffoldMessenger.of(context).showSnackBar(
-//                                   SnackBar(
-//                                       backgroundColor: Colors.red,
-//                                       content: Text(message,
-//                                           textAlign: TextAlign.center,
-//                                           style: const TextStyle(
-//                                               fontSize: 16))));
-//                             });
-//                             setState(() {
-//                               isLoading = false;
-//                             });
-//                           }
-//                         } else {
-//                           setState(() {
-//                             isLoading = false;
-//                           });
-//                           WidgetsBinding.instance
-//                               .addPostFrameCallback((_) {
-//                             ScaffoldMessenger.of(context).showSnackBar(
-//                               const SnackBar(
-//                                 backgroundColor: Colors.red,
-//                                 content: Text(
-//                                   'Fill up all fields',
-//                                   textAlign: TextAlign.center,
-//                                 ),
-//                               ),
-//                             );
-//                           });
-//                         }
-//                       }
-//                     },
-//                   ),
-//                   const SizedBox(
-//                     height: 15,
-//                   ),
-//                   const Row(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       Divider(),
-//                       Text("Or Log In with"),
-//                       Divider(
-//                         thickness: 10,
-//                         height: 10,
-//                         color: Colors.black,
-//                       ),
-//                     ],
-//                   ),
-//                   const SizedBox(
-//                     height: 15,
-//                   ),
-//                   Row(
-//                     mainAxisAlignment: MainAxisAlignment.center,
-//                     children: [
-//                       const Text("Don’t have an account?"),
-//                       GestureDetector(
-//                         onTap: () {
-//                           Navigator.of(context).push(MaterialPageRoute(
-//                             builder: (context) => const SignupScreen(),
-//                           ));
-//                         },
-//                         child: const Text(
-//                           " Sign up",
-//                           style: TextStyle(
-//                             fontWeight: FontWeight.bold,
-//                           ),
-//                         ),
-//                       ),
-//                     ],
-//                   )
-//                 ],
-//               ),
-//             )
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+import 'dart:developer';
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:either_dart/either.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:springboot_flutter_bloggingapp/model/general_services/api_result.dart';
+import 'package:springboot_flutter_bloggingapp/model/requests/login_request.dart';
+import 'package:springboot_flutter_bloggingapp/model/requests/sign_up_request.dart';
+import 'package:springboot_flutter_bloggingapp/model/theme/change_theme_button_widget.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/HomeScreen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/Signup_screen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.dart';
+import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
+
+import '../../main.dart';
+import '../../model/gen/assets.gen.dart';
+import '../../model/general_services/auth_services.dart';
+import '../../model/internet/internet.dart';
+import '../../model/notifier/auth_notifier.dart';
+import '../../model/state/auth_state.dart';
+import '../../view_model/constants/strings.dart';
+import '../../view_model/widgets/app_button.dart';
+import '../../view_model/widgets/custom_text_field.dart';
+
+class LoginScreen extends ConsumerStatefulWidget {
+
+  const LoginScreen({super.key});
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> with TickerProviderStateMixin{
+
+
+  TextEditingController emailController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
+
+  FocusNode emailFocusNode = FocusNode();
+  FocusNode passwordFocusNode = FocusNode();
+
+  @override
+  initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  //api exception already does this aiit
+  //BUT WHEN THERE IS NO CALL
+  Future<bool> noInternet() async{
+    final connectivity = ref.read(internetProvider);
+    if(connectivity.status == ConnectivityStatus.disconnected){
+      WidgetsBinding.instance.addPostFrameCallback((_){
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text(
+              CustomStrings.noInternet1,
+              textAlign: TextAlign.center,
+            ))
+        );
+      });
+      return true;
+    }
+    return false;
+  }
+
+
+
+
+
+
+  void submit() async{
+    if(await noInternet()) return;
+    ref.read(authProvider.notifier).logIn(
+      email: emailController.text,
+      password: passwordController.text,
+      //hasInternet: hasInternet
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+   Size size = MediaQuery.of(context).size;
+    final internetState = ref.watch(internetProvider);
+    final loginState = ref.watch(authProvider);
+
+    ref.listen<AuthState>(authProvider, (previous, next) {
+
+      if (next.request.isSuccess) {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
+      }
+
+      if (next.request.isError) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(next.request.message),
+          ),
+        );
+      }
+    });
+
+
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        title: const Align(
+          alignment: Alignment.topLeft,
+          child: Text("Welcome"),
+        ),
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,),
+          onPressed: Navigator.of(context).pop,
+        ),
+      ),
+      body: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
+          child: Column(
+            children: [
+
+              const ChangeThemeButtonWidget(),
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 15,
+                    ),
+
+
+                    const Text(
+                      "Welcome",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+
+                    customTextField(
+                      errorCondition: loginState.emailError,
+                      focusNode: emailFocusNode,
+                      controller: emailController,
+                      label: "E-mail",
+                      error: 'Enter a valid email address',
+                    ),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+                    customTextField(
+                      error: '',
+                      errorCondition: loginState.passwordError,
+                      isobsure: true,
+                      label: "Password",
+                      controller: passwordController,
+                      ispassword: true,
+                    ),
+
+                    const SizedBox(
+                      height: 20,
+                    ),
+
+
+                    loginState.request.when(
+                        idle: (){
+                          return AppButton(onPressed: submit,
+                            label: "Login",);
+                        },
+                        success: (_){
+                          return AppButton(
+                            onPressed: submit,
+                            label: 'Login',
+                          );
+                        },
+                        error: (message){
+                          return Column(
+                            children: [
+                              Text(
+                                message,
+                                style: const TextStyle(color: Colors.red),
+                              ),
+                              AppButton(
+                                onPressed: submit,
+                                label: 'Try again',
+                              ),
+                            ],
+                          );
+                        },
+                        loading: (){
+                          return Center(
+                              child: LoadingAnimationWidget.inkDrop(
+                                  color: Theme.of(context).brightness == Brightness.dark
+                                      ? kWhite
+                                      : kBlack, size: 25));
+                        }),
+
+
+
+                    TextButton(onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(builder:
+                          (context) => const SignupScreen()));
+
+                    }, child: const Text('Don\'t have an account?'))
+
+
+                  ],
+                ),
+              ),
+            ],
+          )
+      ),
+    );
+  }
+}

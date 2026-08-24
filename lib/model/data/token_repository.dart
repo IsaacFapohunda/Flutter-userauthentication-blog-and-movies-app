@@ -50,6 +50,7 @@ class TokenRepositoryImpl implements TokenRepository{
         return UserCredentials(user: null, refreshToken: null, accessToken: '');
       }
       final userCredentials = UserCredentials.fromJson(const JsonDecoder().convert(encodedUserCredentials));
+      print(""""""""""""""""""""""""""""""""""""""""""""""""" $userCredentials");
       return userCredentials;
     } catch(err, stack){
       log(err.toString());

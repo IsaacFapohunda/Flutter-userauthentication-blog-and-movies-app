@@ -87,11 +87,12 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/movie_images/
     - assets/svgs/
     - assets/svgs/images/
     - assets/svgs/icons/
     - assets/pngs/
-    - assets/.env
+    - .env
     #- assets/.env
 
 

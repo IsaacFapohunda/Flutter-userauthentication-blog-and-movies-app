@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:springboot_flutter_bloggingapp/model/provider/auth_notifier.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/send_otp_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/state/auth_state.dart';
 // import 'package:myroute/flows/registration/Add_ProficPic/views/add_profile_pic.dart';
@@ -17,10 +16,13 @@ import 'package:springboot_flutter_bloggingapp/model/state/auth_state.dart';
 // import '../../AddPayment/views/addPayment.dart';
 import '../../main.dart';
 import '../../model/general_services/auth_services.dart';
-import '../utilities/app_button.dart';
+import '../../model/notifier/auth_notifier.dart';
+import '../../view_model/constants/textstyle.dart';
+import '../../view_model/widgets/app_button.dart';
+import '../../view_model/widgets/back_button.dart';
 import '../../model/theme/app_color.dart';
-import '../utilities/back_button.dart';
-import '../utilities/textstyle.dart';
+
+import 'HomeScreen.dart';
 import 'movie_screen.dart';
 
 class VerificationScreen extends ConsumerStatefulWidget {
@@ -91,7 +93,7 @@ class _VerificationScreenConsumerState
 
     ref.listen<AuthState>(authProvider, (previous, next){
       if(previous?.request.isSuccess != true && next.request.isSuccess){
-        Navigator.push(context, MaterialPageRoute(builder: (context) => const MoviesScreen()));
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const HomeScreen()));
 
       }
     else if(previous?.request.isError != true && next.request.isError){

@@ -4,4 +4,4 @@ class Endpoints{
   static String signup = "/auth/create";
   static String verifyAuthOtp = "/auth/confirmOtp";
   static String uploadDp = "/auth/uploadDp";
-}
+ }

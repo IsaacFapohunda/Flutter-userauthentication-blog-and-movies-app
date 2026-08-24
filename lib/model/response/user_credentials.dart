@@ -17,7 +17,7 @@ class UserCredentials {
 
   factory UserCredentials.fromJson(Map<String, dynamic> json) {
     return UserCredentials(
-      accessToken: json['token'],
+      accessToken: json['accessToken'],
       refreshToken: json["refreshToken"],
       user: json['user'] == null
           ? null

@@ -16,5 +16,3 @@ String truncateText(String text, {int maxLength = 15}) {
       ? '${text.substring(0, maxLength)}...'
       : text;
 }
-
-//String baseUrl = 'http://localhost:8080/api/v1/role_base';

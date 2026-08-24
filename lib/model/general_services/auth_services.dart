@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:either_dart/either.dart';
+import 'package:flutter/cupertino.dart';
 
 import 'package:springboot_flutter_bloggingapp/model/data/token_repository.dart';
 import 'package:springboot_flutter_bloggingapp/model/response/sign_up_response.dart';
@@ -21,8 +22,8 @@ final authServiceProvider = Provider<AuthServiceImpl>((ref) {
   final client = ApiClient(tokenRepository: tokenRepository) ;
   final authApi = AuthAPiImpl(client);
   return AuthServiceImpl(authApi: authApi, tokenRepository: tokenRepository);
-
 });
+
 
 
 ///this is our blueprint like job description. What to expect in the class and doesnt write the code
@@ -45,11 +46,9 @@ class AuthServiceImpl extends AuthService{
   Future<Either<ApiException, bool>> login(LoginRequest loginRequest) async{
     final response = await authApi.login(loginRequest);
     return response.fold((failure) {
-      //now when we communicate with the server it might throw and uncontrollable exception
-      //but when its successful response gotten, theres no error or exception anymore
-      //but to perform other services within our app, we might have to deal with our own custom exception called failure.
-      return Left(failure);
+       return Left(failure);
     }, (loginResponse) async {
+
       await tokenRepository.saveUserCredentials(
           loginResponse.accessToken!, null, loginResponse.refreshToken!);
       // log("access token: ${loginResponse.accessToken!}");
@@ -74,6 +73,10 @@ class AuthServiceImpl extends AuthService{
       return Left(failure);
     }, (signUpResponse) async{
     log("user: ${signUpResponse.toJson()}");
+    final otp = signUpResponse.responseData?.otp;
+    prefs.remove("otp");
+    prefs.setInt("otp", otp!);
+    //prefs.setString('otp', response.responseData?.otp as String);
       final loginResponse = await authApi.login(
         LoginRequest(email: signUpRequest.email, password: signUpRequest.password,),);
       return loginResponse.fold((failure){
@@ -83,6 +86,7 @@ class AuthServiceImpl extends AuthService{
             loginResponse.accessToken!,
             signUpResponseFromJson(jsonEncode(signUpResponse)),
             loginResponse.refreshToken!);
+        log("Signing up and sending accessToken: ${tokenRepository.getUserCredentials().accessToken}");
         return const Right(true);
       });
     });

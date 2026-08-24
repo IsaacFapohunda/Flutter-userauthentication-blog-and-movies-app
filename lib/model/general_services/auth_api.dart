@@ -53,9 +53,6 @@ class AuthAPiImpl extends AuthApi{
       final httpResponse = await apiClient.post(Endpoints.login, data: loginRequest.toJson());
       debugPrint("token ${httpResponse.data}");
     final response = LoginResponse.fromJson(httpResponse.data);
-    //i will use mixpanel, a real time tracking sdk
-    // to monitor the amount of people logged into the app.
-    //this gives me info to better work on
 
     // mixpanel.track("USER LOGGED IN SUCCESSFULLY", properties: {
     // "url": httpResponse.requestOptions.uri,
@@ -64,13 +61,11 @@ class AuthAPiImpl extends AuthApi{
     // "status message": httpResponse.statusMessage,
     // });
     return Right(response);
-    } catch(e){
-    debugPrint(e.toString());
-    // mixpanel.track("USER UNABLE TO LOG IN", properties: {
-    // "url": Endpoints.login,
-    // "error": e,
-    // });
-    return Left(ApiException(e.toString()));
+    } catch (err) {
+      if(err is DioException){
+        return Left(ApiException.getException(err));
+      }
+      return Left(ApiException(err.toString()));
     }
   }
 
@@ -84,10 +79,6 @@ class AuthAPiImpl extends AuthApi{
       await apiClient.post(Endpoints.signup,
           data: signUpRequest.toJson());
       final response = signUpResponseFromJson(jsonEncode(httpResponse.data));
-      print("otp: ${response.responseData?.otp}");
-      final otp = response.responseData?.otp;
-      prefs.setInt("otp", otp!);
-     //prefs.setString('otp', response.responseData?.otp as String);
       return Right(response);
     } catch (err) {
       if(err is DioException){

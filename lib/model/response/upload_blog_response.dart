@@ -1,3 +1,28 @@
+
+//
+// {
+// "success": false,
+// "responseCode": null,
+// "responseMessage": "Successful",
+// "responseData": {
+// "blogpostId": "040183d1-fe88-4c74-81a2-3ba54142dbc2",
+// "blogTitle": "My music book",
+// "blogContent": "My name is dAN.........",
+// "timeCreated": null,
+// "updatedAt": null,
+// "commentsResponse": null,
+// "blog_image": null,
+// "likesCount": 0,
+// "userDTO": {
+// "id": "9b796aa7-6b21-44cb-9f61-816b7a19dbb1",
+// "email": "isaac@gmail.com",
+// "firstName": "isaac",
+// "profilePicture": null
+// }
+// }
+// }
+
+
 class UploadBlogResponse {
   UploadBlogResponse({
     required this.success,
@@ -9,13 +34,13 @@ class UploadBlogResponse {
   final bool? success;
   final dynamic responseCode;
   final String? responseMessage;
-  final ResponseData? responseData;
+  final BlogResponse? responseData;
 
   UploadBlogResponse copyWith({
     bool? success,
     dynamic? responseCode,
     String? responseMessage,
-    ResponseData? responseData,
+    BlogResponse? responseData,
   }) {
     return UploadBlogResponse(
       success: success ?? this.success,
@@ -30,7 +55,7 @@ class UploadBlogResponse {
       success: json["success"],
       responseCode: json["responseCode"],
       responseMessage: json["responseMessage"],
-      responseData: json["responseData"] == null ? null : ResponseData.fromJson(json["responseData"]),
+      responseData: json["responseData"] == null ? null : BlogResponse.fromJson(json["responseData"]),
     );
   }
 
@@ -47,8 +72,11 @@ class UploadBlogResponse {
   }
 }
 
-class ResponseData {
-  ResponseData({
+
+
+
+class BlogResponse {
+  BlogResponse({
     required this.blogpostId,
     required this.blogTitle,
     required this.blogContent,
@@ -70,7 +98,7 @@ class ResponseData {
   final int? likesCount;
   final UserDto? userDto;
 
-  ResponseData copyWith({
+  BlogResponse copyWith({
     String? blogpostId,
     String? blogTitle,
     String? blogContent,
@@ -81,7 +109,7 @@ class ResponseData {
     int? likesCount,
     UserDto? userDto,
   }) {
-    return ResponseData(
+    return BlogResponse(
       blogpostId: blogpostId ?? this.blogpostId,
       blogTitle: blogTitle ?? this.blogTitle,
       blogContent: blogContent ?? this.blogContent,
@@ -94,8 +122,8 @@ class ResponseData {
     );
   }
 
-  factory ResponseData.fromJson(Map<String, dynamic> json){
-    return ResponseData(
+  factory BlogResponse.fromJson(Map<String, dynamic> json){
+    return BlogResponse(
       blogpostId: json["blogpostId"],
       blogTitle: json["blogTitle"],
       blogContent: json["blogContent"],

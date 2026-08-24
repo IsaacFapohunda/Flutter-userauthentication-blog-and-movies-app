@@ -1,333 +1,242 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'package:springboot_flutter_bloggingapp/model/data/token_repository.dart';
-//import 'package:springboot_flutter_bloggingapp/model/services/exceptions.dart';
-import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import '../../main.dart';
-import '../../view/utilities/constants.dart';
-import 'exceptions.dart';
 
-
-final apiClientProvider = Provider<ApiClient>((ref){
+final apiClientProvider = Provider<ApiClient>((ref) {
   final tokenRepository = ref.watch(tokenRepositoryProvider);
-  return ApiClient(tokenRepository: tokenRepository);
+  return ApiClient(
+    tokenRepository: tokenRepository,);
 });
 
 
-class ApiClient{
-
+class ApiClient {
   final TokenRepository tokenRepository;
 
-  late Dio _dio;
+  late final Dio _dio;
 
-  ApiClient({required this.tokenRepository}) {
-
-
-
-    final options = BaseOptions(
-      baseUrl: baseUrl.toString(),
-      connectTimeout: const Duration(milliseconds: 60000),
-      receiveTimeout: const Duration(milliseconds: 60000),
-      contentType: 'application/json',
-      validateStatus: _validateStatus
+  ApiClient({
+    required this.tokenRepository,
+  }) {
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl.toString(),
+        connectTimeout: const Duration(seconds: 60),
+        receiveTimeout: const Duration(seconds: 60),
+        contentType: 'application/json',
+        validateStatus: _validateStatus,
+      ),
     );
 
-    _dio = Dio(options);
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) {
+          final token = getToken();
+          if (kDebugMode) {
+            print("???????????????????????????????????????????Sending token: $token");
+
+          }
 
 
-    var cache = <Uri, Response>{};
-    //check cache when uri needed instead calling network
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
 
+          handler.next(options);
+        },
 
-    final presetHeaders = <String, String>{
-        HttpHeaders.contentTypeHeader: 'application/json',
-    };
+        onError: (error, handler) async {
+          if (error.response?.statusCode == 401 ||
+              error.response?.statusCode == 403) {
+            final handled = await _refreshAndRetry(error);
 
-    _dio.options.headers = presetHeaders;
+            if (handled != null) {
+              return handler.resolve(handled);
+            }
+          }
 
-    _dio.interceptors.addAll([
-       InterceptorsWrapper(
-           onRequest: (options, handler){
-             if(cache.containsKey(options.uri)){
-               return handler.resolve(cache[options.uri]!);
-             }
-             final token = getToken();
-             if(token != null){
-             print("inside the api client");
-             options.headers["Authorization"] =  "Bearer $token";
-             }
-             return handler.next(options);
-           },
-           onResponse: (Response response, handler){
-             cache[response.requestOptions.uri] = response;
-             //save to cache with key (url)
+          handler.next(error);
+        },
+      ),
+    );
 
-             return handler.resolve(response);
-       }, onError: (err, handler) async{
-             var userCredentials = tokenRepository.getUserCredentials();
-             if (err.response?.statusCode == 204) {
-               //content
-               return handler.resolve(
-                   Response(requestOptions: RequestOptions(path: baseUrl!)));
-               //fake success
-             }
-             if (err.response?.statusCode == 202) {
-               return handler.resolve(err.response!);
-               //pass
-             }
-             if(err.response?.statusCode == 401 ||
-                 err.response?.statusCode == 403){
-               print("token expired");
-
-               var options = err.response!.requestOptions;
-               //get the request that failed
-
-               if(userCredentials.refreshToken == null){
-                 return handler.reject(err);
-               }
-
-               try{
-
-                 print("refreshing token");
-                 //given a refresh token api
-                 final response = await Dio().post(
-                   '$baseUrl/token/refresh/',
-                   data: {"refresh": userCredentials.refreshToken},
-                 );
-
-
-                 if(_validateStatus(response.statusCode)){
-                   await tokenRepository.updateUserCredentials(
-                       userCredentials.copyWithToken(
-                           response.data['access_token'], response.data['refresh_token']));
-                   try{
-
-                     final opts = Options(
-                       method: options.method,
-                       headers: options.headers,
-                       contentType: options.contentType);
-
-                     //retry the failed request with a new token
-                     final cloneResponse = await _dio.request(options.path,
-                         options: opts,
-                         data: options.data,
-                         queryParameters: options.queryParameters);
-                     if (cloneResponse != null) {
-                       return handler.resolve(cloneResponse);
-                     } else {
-                       return;
-                     }
-                   } on DioException catch (err) {
-                     return handler.reject(err);
-                   }
-
-                 } else{
-                   return handler.reject(err); //handle with custom error something went wrong
-                 }
-               } on DioException catch (err) {
-                 if (kDebugMode) {
-                   print("error of other request");
-                 }
-                 return handler
-                     .reject(err); //handle with custom error something went wrong
-               }
-             } else if (err.type == DioExceptionType.connectionTimeout) {
-               //'no internet' backup....prob. show last data in store
-               var cachedResponse = cache[err.requestOptions.uri];
-               if (cachedResponse != null) {
-                 return cachedResponse.data;
-               }
-             }
-
-             return handler.reject(err);
-
-           }),
-
-       //remove or set all to false for production release
-       LogInterceptor(
-         requestBody: true,
-         requestHeader: false,
-         responseBody: true,
-         error: true,
-       )
-     ]);
-
+    if (kDebugMode) {
+      _dio.interceptors.add(
+        LogInterceptor(
+          requestBody: true,
+          requestHeader: false,
+          responseBody: true,
+          error: true,
+        ),
+      );
+    }
   }
 
 
+
   Future<Response> get(
-      String uri,{
+      String path, {
+        dynamic data,
         Map<String, dynamic>? queryParameters,
-  }) async{
-    try{
-      final response = await _dio.get(
-        uri,
-        queryParameters: queryParameters,
-      ).catchError((err){
-        throw err as DioException;
-      });
-      return response;
-    } catch(e){
-      throw ApiException(e.toString());
-    //  throw ApiException.getException(e);
-    }
+        Map<String, dynamic>? headers,
+      }) {
+    return _dio.get(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: headers,
+      ),
+    );
   }
 
 
   Future<Response> post(
-    String uri, {
-      Map<String, dynamic>? data,
-      FormData? formData,
-    Map<String, dynamic>? queryParameters,
-    Map<String, dynamic>? extraHeaders,
-
-      }) async{
-    try{
-      if (extraHeaders != null){
-        _dio.options.headers.addAll(extraHeaders);
-      } if(data != null){
-        _dio.options.contentType = "application/json";
-      }
-      if (formData != null) {
-        _dio.options.contentType = "multipart/form-data";
-      }
-
-      final response = await _dio.post(
-        uri,
-        data: data ?? formData,
-          //that is if data is null, then it will be formdata
-        queryParameters: queryParameters,
-      ).catchError((err){
-        if (formData != null){
-          _dio.options.contentType = "application/json";
-        }
-
-        // mixpanel.track("USER ENCOUNTERED AN ERROR WHILE RUNNING REQUEST", properties: {
-        //   "url": uri,
-        //   "method":'POST',
-        //   "error": ApiException.getException(err).message,
-        //   'erroCode': err.toString(),
-        //   if (queryParameters != null)'queryParameters': queryParameters,
-        //   if (extraHeaders != null) 'extraHeaders': extraHeaders,
-        // });
-        throw err as DioException;
-      });
-      return response;
-
-    } catch(e){
-      if (formData != null) {
-        _dio.options.contentType = "application/json";
-      }
-      rethrow;
-    }
-
+      String path, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        Map<String, dynamic>? headers,
+      }) {
+    return _dio.post(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: headers,
+      ),
+    );
   }
+
 
 
   Future<Response> put(
-      String uri, {
-        Map<String, dynamic>? data,
-        FormData? formData,
+      String path, {
+        dynamic data,
         Map<String, dynamic>? queryParameters,
-        Map<String, dynamic>? extraHeaders,
-  }) async{
-    try{
-
-      final response = await _dio.put(
-        uri,
-        data: data ?? formData,
-        queryParameters: queryParameters,
-      ).catchError((err){
-        if (formData != null) {
-          _dio.options.contentType = "application/json";
-        }
-
-        throw err as DioException;
-      });
-      return response;
-    }  catch (e) {
-      if (formData != null) {
-        _dio.options.contentType = "application/json";
-      }
-      throw ApiException(e.toString());
-     // throw ApiException.getException(e);
-    }
+        Map<String, dynamic>? headers,
+      }) {
+    return _dio.put(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: headers,
+      ),
+    );
   }
+
 
 
   Future<Response> patch(
-  String uri, {
-  Map<String, dynamic>? data,
-  Map<String, dynamic>? queryParameters,
-  }) async{
-    try{
-
-      final response = await _dio.patch(
-        uri,
-        data: data,
-        queryParameters: queryParameters,
-      ).catchError((err){
-
-        throw err as DioException;
-      });
-      return response;
-    } catch (e) {
-      throw ApiException(e.toString());
-     // throw ApiException.getException(e);
-    }
-
+      String path, {
+        dynamic data,
+        Map<String, dynamic>? queryParameters,
+        Map<String, dynamic>? headers,
+      }) {
+    return _dio.patch(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: headers,
+      ),
+    );
   }
+
+
 
   Future<Response> delete(
-      String uri, {
-        Map<String, dynamic>? data,
+      String path, {
+        dynamic data,
         Map<String, dynamic>? queryParameters,
-        Map<String, dynamic>? extraHeaders,
-      }) async {
-    try {
-      if (extraHeaders != null) {
-        _dio.options.headers.addAll(extraHeaders);
-      }
-      if (data != null) {
-        _dio.options.contentType = "application/json";
-      }
-      final response = await _dio!.delete(
-        uri,
-        data: data,
-        queryParameters: queryParameters,
-      ).catchError((err){
-
-        throw err as DioException;
-      });
-
-      return response;
-    } catch (e) {
-      throw ApiException(e.toString());
-     // throw ApiException.getException(e);
-    }
+        Map<String, dynamic>? headers,
+      }) {
+    return _dio.delete(
+      path,
+      data: data,
+      queryParameters: queryParameters,
+      options: Options(
+        headers: headers,
+      ),
+    );
   }
 
-  String? getToken(){
+
+
+  String? getToken() {
     return tokenRepository.getUserCredentials().accessToken;
   }
 
+
+
+  Future<Response?> _refreshAndRetry(
+      DioException error,
+      ) async {
+    final credentials = tokenRepository.getUserCredentials();
+
+    final refreshToken = credentials.refreshToken;
+
+    if (refreshToken == null || refreshToken.isEmpty) {
+      return null;
+    }
+
+    try {
+      final refreshDio = Dio(
+        BaseOptions(
+          baseUrl: baseUrl.toString(),
+          contentType: 'application/json',
+          validateStatus: _validateStatus,
+        ),
+      );
+
+      final response = await refreshDio.post(
+        '/token/refresh/',
+        data: {
+          'refresh': refreshToken,
+        },
+      );
+
+      final newAccessToken = response.data['access_token'];
+      final newRefreshToken = response.data['refresh_token'];
+
+      if (newAccessToken == null) {
+        return null;
+      }
+
+      await tokenRepository.updateUserCredentials(
+        credentials.copyWithToken(
+          newAccessToken,
+          newRefreshToken,
+        ),
+      );
+
+      final requestOptions = error.requestOptions;
+
+      requestOptions.headers['Authorization'] =
+      'Bearer $newAccessToken';
+
+      return await _dio.fetch(requestOptions);
+    } on DioException {
+      return null;
+    }
+  }
 }
 
-
-
-bool _validateStatus(int? status){
-  return status! == 200 || status == 201;
+// Accept all successful HTTP responses.
+bool _validateStatus(int? status) {
+  return status != null && status >= 200 && status < 300;
 }
 
 extension ResponseExtension on Response {
   bool get isSuccess {
-    final is200 = statusCode == HttpStatus.ok;
-    final is201 = statusCode == HttpStatus.created;
-    return is200 || is201;
+    final status = statusCode;
+
+    return status != null &&
+        status >= 200 &&
+        status < 300;
   }
 }

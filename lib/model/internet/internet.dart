@@ -39,10 +39,13 @@ Future<void> checkConnectivity() async {
   var result = await connectivity.checkConnectivity();
   if (result.contains(ConnectivityResult.none)) {
     state = ConnectivityState(ConnectivityStatus.disconnected);
+
   } else {
     state = ConnectivityState(ConnectivityStatus.connected);
   }
 }
+
+
 
 
 }

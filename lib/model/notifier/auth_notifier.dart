@@ -4,11 +4,14 @@ import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:springboot_flutter_bloggingapp/model/general_services/api_result.dart';
 import 'package:springboot_flutter_bloggingapp/model/general_services/auth_exports.dart';
+import 'package:springboot_flutter_bloggingapp/model/requests/login_request.dart';
 
 import '../requests/send_otp_request.dart';
 import '../requests/sign_up_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/state/auth_state.dart';
 
+
+///better use async provider tho
 
 //this class handles all auth notifier and state
 final authProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref){
@@ -147,6 +150,56 @@ class AuthNotifier extends StateNotifier<AuthState>{
      });
 
      }
+
+
+   Future<void> logIn({
+     required String email,
+     required String password,
+   }) async{
+
+     resetValidation();
+
+     if(password.isEmpty){
+       state =state.copyWith(
+         passwordError: true,
+       );
+       return;
+     }
+
+     if(!isValidEmail(email.trim())){
+       state = state.copyWith(
+         emailError: true,
+       );
+       return;
+     }
+
+     state = state.copyWith(
+       request: ApiResult.loading("Logging in..."),
+     );
+
+     final response = await authService.login(
+
+         LoginRequest(
+             email: email.trim(),
+             password: password.trim(),
+         ));
+
+     response.fold(
+             (failure){
+           state = state.copyWith(
+             request: ApiResult.error(failure.message),
+           );
+
+         },
+             (success){
+           state = state.copyWith(
+             request: ApiResult.success(success),
+           );
+         }
+     );
+
+   }
+
 
 
    void resetRequestState(){

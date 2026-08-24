@@ -1,15 +1,10 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:provider/provider.dart';
-import 'package:springboot_flutter_bloggingapp/model/provider/navigation_bar_provider.dart';
-
-
-import '../../view/utilities/strings.dart';
-import '../gen/assets.gen.dart';
-import 'internet.dart';
+import '../constants/strings.dart';
+import '../../model/gen/assets.gen.dart';
+import '../../model/internet/internet.dart';
 
 
 
@@ -21,7 +16,6 @@ class NoInternetWidget extends ConsumerStatefulWidget {
 }
 
 class _NoInternetWidgetState extends ConsumerState<NoInternetWidget> {
- // final navigationBarState = ref.watch(navigationBarProvider);
   bool _isLoading = false;
   bool isConnected = false;
   @override
@@ -79,26 +73,26 @@ class _NoInternetWidgetState extends ConsumerState<NoInternetWidget> {
               ),
               onPressed: () async{
                 await ref.read(internetProvider.notifier).checkConnectivity();
-               // Future.delayed(const Duration(seconds: 3), () {
-               //      if(internetState.status == ConnectivityStatus.connected){
-               //        if (kDebugMode) {
-               //          print("so connected");
-               //        }
-               //        setState((){
-               //          isConnected = true;
-               //          _isLoading = true;
-               //        });
-               //
-               //      } else if(internetState.status == ConnectivityStatus.disconnected){
-               //        if (kDebugMode) {
-               //          print("so disconnected");
-               //        }
-               //        setState(() {
-               //          isConnected = false;
-               //          _isLoading = false;
-               //        });
-               //      }
-               // });
+               Future.delayed(const Duration(seconds: 1), () {
+                    if(internetState.status == ConnectivityStatus.connected){
+                      if (kDebugMode) {
+                        print("connected");
+                      }
+                      setState((){
+                        isConnected = true;
+                        _isLoading = false;
+                      });
+
+                    } else if(internetState.status == ConnectivityStatus.disconnected){
+                      if (kDebugMode) {
+                        print("disconnected");
+                      }
+                      setState(() {
+                        isConnected = false;
+                        _isLoading = true;
+                      });
+                    }
+               });
               },
               child: const Text('Retry'),
             ),

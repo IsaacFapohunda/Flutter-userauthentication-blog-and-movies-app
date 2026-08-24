@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/BlogScreen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/OnboardScreen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/TypeBlogScreen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/HomeScreen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/Signup_screen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/login_screen.dart';
+import 'package:springboot_flutter_bloggingapp/view/screens/movie_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/splash_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/app_image.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/constants.dart';
 import 'package:provider/provider.dart';
-import 'model/theme/theme_provider.dart';
+import 'package:springboot_flutter_bloggingapp/view_model/constants/constants.dart';import 'model/theme/theme_provider.dart';
 import 'dart:io';
 
 
@@ -25,6 +30,7 @@ String baseUrl = 'https://springbootrolebaseauth.onrender.com/api/v1/role_base';
 Future<void> main() async{
   WidgetsFlutterBinding.ensureInitialized();
   prefs = await SharedPreferences.getInstance();
+  await dotenv.load();
 
   await SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.manual,

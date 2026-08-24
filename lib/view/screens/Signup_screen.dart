@@ -1,32 +1,17 @@
-import 'dart:developer';
-import 'dart:io';
-
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:either_dart/either.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:provider/provider.dart';
-import 'package:springboot_flutter_bloggingapp/model/general_services/api_result.dart';
-import 'package:springboot_flutter_bloggingapp/model/provider/navigation_bar_provider.dart';
-import 'package:springboot_flutter_bloggingapp/model/provider/auth_notifier.dart';
-import 'package:springboot_flutter_bloggingapp/model/requests/login_request.dart';
-import 'package:springboot_flutter_bloggingapp/model/requests/sign_up_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/theme/change_theme_button_widget.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.dart';
-import 'package:springboot_flutter_bloggingapp/view/utilities/app_button.dart';
 import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
-
 import '../../main.dart';
-import '../../model/gen/assets.gen.dart';
-import '../../model/general_services/auth_services.dart';
 import '../../model/internet/internet.dart';
+import '../../model/notifier/auth_notifier.dart';
 import '../../model/state/auth_state.dart';
-import '../utilities/constants.dart';
-import '../utilities/custom_text_field.dart';
-import '../utilities/screen_util.dart';
-import '../utilities/strings.dart';
+import '../../view_model/constants/strings.dart';
+import '../../view_model/widgets/app_button.dart';
+import '../../view_model/widgets/custom_text_field.dart';
+import 'TypeBlogScreen.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
 
@@ -53,16 +38,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
   FocusNode firstNameFocusNode = FocusNode();
   FocusNode confirmPasswordFocusNode = FocusNode();
 
-  late AnimationController idleAnimation;
-  late AnimationController onSelectedAnimation;
-  late AnimationController onChangedAnimation;
-  Duration animationDuration = const Duration(milliseconds: 700);
-  late AppLifecycleListener _appLifecycleListener;
-  late AnimationController navigationContainerAnimationController =
-  AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 500),
-  );
+
 
 
 
@@ -70,19 +46,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
    initState() {
     // TODO: implement initState
     super.initState();
-
-
-    idleAnimation = AnimationController(vsync: this);
-    onSelectedAnimation =
-        AnimationController(vsync: this, duration: animationDuration);
-    onChangedAnimation =
-        AnimationController(vsync: this, duration: animationDuration);
-
-    late AnimationController navigationContainerAnimationController =
-    AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 500),
-    );
 
   }
 
@@ -93,10 +56,6 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
   @override
   void dispose() {
     // TODO: implement dispose
-    idleAnimation.dispose();
-    onSelectedAnimation.dispose();
-    onChangedAnimation.dispose();
-    navigationContainerAnimationController.dispose();
     firstNameController.dispose();
 
     emailController.dispose();
@@ -124,7 +83,8 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
   }
 
 
-  int? otp = prefs.getInt('otp');
+
+
 
 
   void submit() async{
@@ -140,16 +100,14 @@ class _SignupScreenState extends ConsumerState<SignupScreen> with TickerProvider
 
   @override
   Widget build(BuildContext context) {
-    height: MediaQuery.of(context).size.height;
     final internetState = ref.watch(internetProvider);
     final signupState = ref.watch(authProvider);
 
-
-
     ref.listen<AuthState>(authProvider, (previous, next) {
+      int? otp = prefs.getInt('otp');
       if (next.request.isSuccess) {
 
-        Navigator.push(context, MaterialPageRoute(builder: (context) => VerificationScreen(email: emailController.text,)));
+       Navigator.push(context, MaterialPageRoute(builder: (context) => VerificationScreen(email: emailController.text,)));
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(otp.toString())),
         );
