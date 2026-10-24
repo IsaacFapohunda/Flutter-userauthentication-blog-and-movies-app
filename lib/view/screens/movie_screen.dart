@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:springboot_flutter_bloggingapp/view_model/widgets/no_internet_widget.dart';
 import '../../model/internet/internet.dart';
-import '../../model/notifier/movie_notifier.dart';
 import '../../model/theme/app_color.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../view_model/constants/textstyle.dart';
+import '../../view_model/notifier/movie_notifier.dart';
+import '../constants/textstyle.dart';
+import '../widgets/no_internet_widget.dart';
 
 
 

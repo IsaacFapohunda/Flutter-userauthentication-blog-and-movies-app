@@ -1,9 +1,9 @@
 import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:springboot_flutter_bloggingapp/model/feature_services/Blog/blog_service.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/BlogRequest.dart';
 
-import '../response/upload_blog_response.dart';
+import '../../model/app_features/app_services/blog_service.dart';
+import '../../model/response/upload_blog_response.dart';
 
 final blogNotifierProvider = StateNotifierProvider<BlogNotifier,
     AsyncValue<BlogResponse>>((ref){

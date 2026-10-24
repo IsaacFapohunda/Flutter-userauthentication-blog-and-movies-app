@@ -3,10 +3,11 @@ import 'package:dio/dio.dart';
 import 'package:either_dart/either.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:springboot_flutter_bloggingapp/model/externalClient/external_api_client.dart';
-import 'package:springboot_flutter_bloggingapp/model/feature_endpoints/movie_endpoint.dart';
+import 'package:springboot_flutter_bloggingapp/model/infrastructure/external_api_client.dart';
 import 'package:springboot_flutter_bloggingapp/model/general_services/exceptions.dart';
 import 'package:springboot_flutter_bloggingapp/model/response/movie_response.dart';
+
+import '../../endpoints/movie_endpoint.dart';
 
 
 final movieApiProvider = Provider<MovieApi>((ref) {

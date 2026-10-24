@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import '../../model/notifier/blog_notifier.dart';
 import '../../model/theme/app_color.dart';
+import '../../view_model/notifier/blog_notifier.dart';
 import 'TypeBlogScreen.dart';
 
 
@@ -56,8 +56,14 @@ class _BlogScreenState extends ConsumerState<BlogScreen> {
     ),
         child: blogRef.when(
             data: (result){
-              Text(result.blogTitle!);
-              Text(result.blogContent!);
+             return Center(
+               child: Column(
+                 children: [
+                   Text(result.blogTitle!),
+                   Text(result.blogContent!),
+                 ],
+               ),
+             );
             }, error: (err, _){
           Text('Error: $err');
         }, loading: (){

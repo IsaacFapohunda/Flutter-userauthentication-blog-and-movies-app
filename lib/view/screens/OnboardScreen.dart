@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 
-import '../../view_model/constants/app_image.dart';
-import '../../view_model/widgets/app_button.dart';
+import '../constants/app_image.dart';
+import '../widgets/app_button.dart';
 import 'Signup_screen.dart';
 import 'login_screen.dart';
 

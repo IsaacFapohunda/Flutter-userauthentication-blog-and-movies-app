@@ -3,18 +3,17 @@ import 'dart:developer';
 
 import 'package:either_dart/either.dart';
 import 'package:flutter/cupertino.dart';
-
-import 'package:springboot_flutter_bloggingapp/model/data/token_repository.dart';
 import 'package:springboot_flutter_bloggingapp/model/response/sign_up_response.dart';
 //import 'package:springboot_flutter_bloggingapp/model/services/auth_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../main.dart';
-import '../requests/login_request.dart';
-import '../requests/send_otp_request.dart';
-import '../requests/sign_up_request.dart';
-import 'api_client.dart';
-import 'auth_api.dart';
-import 'exceptions.dart';
+import '../../../main.dart';
+import '../../repository/token_repository.dart';
+import '../../requests/login_request.dart';
+import '../../requests/send_otp_request.dart';
+import '../../requests/sign_up_request.dart';
+import '../../general_services/api_client.dart';
+import '../interceptor/auth_interceptor.dart';
+import '../../general_services/exceptions.dart';
 
 
 final authServiceProvider = Provider<AuthServiceImpl>((ref) {
@@ -26,7 +25,8 @@ final authServiceProvider = Provider<AuthServiceImpl>((ref) {
 
 
 
-///this is our blueprint like job description. What to expect in the class and doesnt write the code
+
+///Blueprint
 abstract class AuthService {
   Future<Either<ApiException, bool>> login(LoginRequest loginRequest);
   Future<Either<ApiException, bool>> signup(SignUpRequest signUpRequest);
@@ -34,7 +34,7 @@ abstract class AuthService {
 
 }
 
-///return raw string
+
 class AuthServiceImpl extends AuthService{
 
   final AuthApi authApi;

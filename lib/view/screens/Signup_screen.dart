@@ -6,11 +6,11 @@ import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.
 import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 import '../../main.dart';
 import '../../model/internet/internet.dart';
-import '../../model/notifier/auth_notifier.dart';
-import '../../model/state/auth_state.dart';
-import '../../view_model/constants/strings.dart';
-import '../../view_model/widgets/app_button.dart';
-import '../../view_model/widgets/custom_text_field.dart';
+import '../../view_model/notifier/auth_notifier.dart';
+import '../../view_model/state/auth_state.dart';
+import '../constants/strings.dart';
+import '../widgets/app_button.dart';
+import '../widgets/custom_text_field.dart';
 import 'TypeBlogScreen.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {

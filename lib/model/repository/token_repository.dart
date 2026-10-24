@@ -66,13 +66,6 @@ class TokenRepositoryImpl implements TokenRepository{
   }
 
 
-
-  /* to retrieve
-  String enc... = prefs.getString("usercred");
-  Map<String, dynamic> decodedToMap =  json.decode(enc..)
-
-   */
-
   @override
   Future<void> updateUserCredentials(UserCredentials userCredentials) async {
     prefs.setString('userCredentials', const JsonEncoder().convert(userCredentials.toJson()));

@@ -1,14 +1,15 @@
 import 'dart:async';
 
 import 'package:either_dart/either.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:springboot_flutter_bloggingapp/model/general_services/api_result.dart';
-import 'package:springboot_flutter_bloggingapp/model/general_services/auth_exports.dart';
+import 'package:springboot_flutter_bloggingapp/model/app_features/exports/auth_exports.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/login_request.dart';
 
-import '../requests/send_otp_request.dart';
-import '../requests/sign_up_request.dart';
-import 'package:springboot_flutter_bloggingapp/model/state/auth_state.dart';
+import '../../model/requests/send_otp_request.dart';
+import '../../model/requests/sign_up_request.dart';
+import '../state/auth_state.dart';
 
 
 ///better use async provider tho
@@ -109,6 +110,9 @@ class AuthNotifier extends StateNotifier<AuthState>{
 
      response.fold(
              (failure){
+               if (kDebugMode) {
+                 print(failure);
+               }
                state = state.copyWith(
                  request: ApiResult.error(failure.message),
                );

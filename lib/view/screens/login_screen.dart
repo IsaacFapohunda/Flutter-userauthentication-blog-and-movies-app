@@ -1,9 +1,4 @@
-import 'dart:developer';
-import 'dart:io';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:either_dart/either.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -19,13 +14,12 @@ import 'package:springboot_flutter_bloggingapp/model/theme/app_color.dart';
 
 import '../../main.dart';
 import '../../model/gen/assets.gen.dart';
-import '../../model/general_services/auth_services.dart';
 import '../../model/internet/internet.dart';
-import '../../model/notifier/auth_notifier.dart';
-import '../../model/state/auth_state.dart';
-import '../../view_model/constants/strings.dart';
-import '../../view_model/widgets/app_button.dart';
-import '../../view_model/widgets/custom_text_field.dart';
+import '../../view_model/notifier/auth_notifier.dart';
+import '../../view_model/state/auth_state.dart';
+import '../constants/strings.dart';
+import '../widgets/app_button.dart';
+import '../widgets/custom_text_field.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
 

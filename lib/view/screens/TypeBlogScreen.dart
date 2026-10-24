@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:springboot_flutter_bloggingapp/model/internet/internet.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/BlogRequest.dart';
-import '../../model/notifier/blog_notifier.dart';
-import '../../view_model/constants/strings.dart';
+import '../../view_model/notifier/blog_notifier.dart';
+import '../constants/strings.dart';
 import 'BlogScreen.dart';
 
 class TypeBlogScreen extends ConsumerStatefulWidget {
@@ -14,14 +14,16 @@ class TypeBlogScreen extends ConsumerStatefulWidget {
   ConsumerState<TypeBlogScreen> createState() => _BlogScreenState();
 }
 
-TextEditingController blogContentController = TextEditingController();
-TextEditingController blogTitleController = TextEditingController();
-
-
-
 
 
 class _BlogScreenState extends ConsumerState<TypeBlogScreen> {
+
+
+  TextEditingController blogContentController = TextEditingController();
+  TextEditingController blogTitleController = TextEditingController();
+
+
+
 
   Future<bool> noInternet() async{
     final connectivity = ref.read(internetProvider);

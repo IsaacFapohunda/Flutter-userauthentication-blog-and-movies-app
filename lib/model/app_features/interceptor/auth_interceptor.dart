@@ -13,14 +13,14 @@ import 'package:either_dart/either.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/send_otp_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/requests/uploadDp_request.dart';
 import 'package:springboot_flutter_bloggingapp/model/response/sign_up_response.dart';
-import '../response/verify_otp_response.dart';
-import 'api_client.dart';
-import 'endpoints_url.dart';
-import '../requests/sign_up_request.dart';
-import '../response/login_response.dart';
+import '../../general_services/Endpoints_url.dart';
+import '../../response/verify_otp_response.dart';
+import '../../general_services/api_client.dart';
+import '../../requests/sign_up_request.dart';
+import '../../response/login_response.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
-import 'exceptions.dart';
+import '../../general_services/exceptions.dart';
 
 
 
@@ -82,8 +82,10 @@ class AuthAPiImpl extends AuthApi{
       return Right(response);
     } catch (err) {
       if(err is DioException){
+       ///error from api
         return Left(ApiException.getException(err));
       }
+      ///error from our configuration
       return Left(ApiException(err.toString()));
     }
   }

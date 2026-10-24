@@ -4,8 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:springboot_flutter_bloggingapp/model/data/token_repository.dart';
 import '../../main.dart';
+import '../repository/token_repository.dart';
 
 final apiClientProvider = Provider<ApiClient>((ref) {
   final tokenRepository = ref.watch(tokenRepositoryProvider);
@@ -25,19 +25,20 @@ class ApiClient {
     _dio = Dio(
       BaseOptions(
         baseUrl: baseUrl.toString(),
-        connectTimeout: const Duration(seconds: 60),
-        receiveTimeout: const Duration(seconds: 60),
+        connectTimeout: const Duration(seconds: 20),
+        receiveTimeout: const Duration(seconds: 20),
         contentType: 'application/json',
         validateStatus: _validateStatus,
       ),
     );
+
 
     _dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) {
           final token = getToken();
           if (kDebugMode) {
-            print("???????????????????????????????????????????Sending token: $token");
+            print("Sending token: $token");
 
           }
 
@@ -50,6 +51,15 @@ class ApiClient {
         },
 
         onError: (error, handler) async {
+
+          if(error.type == DioExceptionType.connectionTimeout ||
+              error.type == DioExceptionType.receiveTimeout ||
+              error.type == DioExceptionType.sendTimeout ||
+              error.type == DioExceptionType.connectionError){
+
+            return handler.next(error.copyWith(message: "This request is taking too long"));
+          }
+
           if (error.response?.statusCode == 401 ||
               error.response?.statusCode == 403) {
             final handled = await _refreshAndRetry(error);

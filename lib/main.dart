@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:springboot_flutter_bloggingapp/view/constants/constants.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/BlogScreen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/OnboardScreen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/TypeBlogScreen.dart';
@@ -15,7 +16,7 @@ import 'package:springboot_flutter_bloggingapp/view/screens/movie_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/splash_screen.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/verification_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:springboot_flutter_bloggingapp/view_model/constants/constants.dart';import 'model/theme/theme_provider.dart';
+import 'model/theme/theme_provider.dart';
 import 'dart:io';
 
 
@@ -96,7 +97,7 @@ class _MyAppState extends ConsumerState<MyApp> {
         navigatorKey: navigatorKey,
         //this enables to perform navigation actions(push, pop
         //without needing a buildcontext)
-        home: const SignupScreen(),
+        home: const OnboardingScreen(),
         );
       },
 

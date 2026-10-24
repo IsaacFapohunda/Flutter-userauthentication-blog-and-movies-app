@@ -1,8 +1,8 @@
 import 'package:either_dart/either.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:springboot_flutter_bloggingapp/model/feature_services/movie/movie_api.dart';
 
-import '../response/movie_response.dart';
+import '../../model/infrastructure/services/movie/movie_api.dart';
+import '../../model/response/movie_response.dart';
 
 
 final movieNotifierProvider = StateNotifierProvider<MovieNotifier, AsyncValue<List<Result>>>((ref){

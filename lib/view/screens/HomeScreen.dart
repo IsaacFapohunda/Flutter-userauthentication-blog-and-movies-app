@@ -1,5 +1,4 @@
-import 'dart:async';
-import 'package:flutter/widgets.dart';
+
 import "package:flutter/material.dart";
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -7,10 +6,10 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:springboot_flutter_bloggingapp/view/screens/movie_screen.dart';
 
-import '../../model/data/token_repository.dart';
 import '../../model/gen/assets.gen.dart';
+import '../../model/repository/token_repository.dart';
 import '../../model/theme/app_color.dart';
-import '../../view_model/constants/strings.dart';
+import '../constants/strings.dart';
 import 'BlogScreen.dart';
 import 'TypeBlogScreen.dart';
 
